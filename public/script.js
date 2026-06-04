@@ -1,23 +1,20 @@
 // Находим форму на странице
+// Находим форму на странице
 const form = document.getElementById('contact-form');
 
-// Вешаем прослушиватель события "отправка"
 form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Отменяем стандартную перезагрузку страницы при нажатии кнопки
+    e.preventDefault();
 
-    // Собираем данные из полей
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const message = document.getElementById('message').value;
 
-    // Меняем текст кнопки на время отправки
     const btn = form.querySelector('button');
     const originalBtnText = btn.textContent;
-    btn.textContent = 'Отправка...';
+    btn.textContent = 'Sending...'; // Перевели текст ожидания
 
     try {
-        // Отправляем данные на наш Node.js бэкенд
-      const response = await fetch('/send', {
+        const response = await fetch('/send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, message })
@@ -26,15 +23,15 @@ form.addEventListener('submit', async (e) => {
         const result = await response.json();
 
         if (result.success) {
-            alert('Ура! Сообщение успешно отправлено!');
-            form.reset(); // Очищаем поля формы
+            alert('Success! Your message has been sent.'); // Перевели успех
+            form.reset();
         } else {
-            alert('Произошла ошибка при отправке.');
+            alert('An error occurred while sending.'); // Перевели ошибку
         }
     } catch (error) {
         console.error(error);
-        alert('Сервер недоступен. Проверьте, запущен ли Node.js');
+        alert('Server is unavailable. Please try again later.'); // Перевели ошибку сервера
     } finally {
-        btn.textContent = originalBtnText; // Возвращаем исходный текст кнопке
+        btn.textContent = originalBtnText;
     }
 });

@@ -16,105 +16,70 @@
 </head>
 <body>
 
+    <!-- Шапка и Навигация -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">Maksym.dev</div>
+            <!-- Логотип теперь работает как кнопка "Наверх" -->
+            <a href="#" class="logo">Maksym.dev</a>
             <ul class="nav-links">
-                <li><a href="#about">Обо мне</a></li>
-                <li><a href="#skills">Навыки</a></li>
-                <li><a href="#portfolio">Проекты</a></li>
-                <li><a href="#contact">Контакты</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Expertise</a></li>
+                <li><a href="#portfolio">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
+        <!-- Герой-секция -->
         <section class="hero" id="about">
-            <h1>Привет! Я Максим, <br> <span class="highlight">IT-Специалист и Разработчик</span></h1>
-            <p>Решаю технические задачи: от администрирования сетей до создания современных веб-приложений.</p>
-            <button class="btn">Связаться со мной</button>
+            <h1>IT Engineering & <br> <span class="highlight">Software Development</span></h1>
+            <p>Design, development, and administration of IT infrastructure. A comprehensive approach to solving technical business challenges.</p>
+            <a href="#contact" class="btn">Discuss a Project</a>
         </section>
-        <!-- Секция Навыков -->
-        <section class="skills-section" id="skills">
-            <h2 class="section-title">Мой <span class="highlight">Стек</span> Технологий</h2>
-            
-            <div class="skills-grid">
-                <!-- Карточка 1: Программирование -->
-                <div class="skill-card">
-                    <h3>💻 Разработка & Мобайл</h3>
-                    <ul class="skill-list">
-                        <li>C / C++</li>
-                        <li>C# / .NET</li>
-                        <li>JavaScript (ES6+)</li>
-                        <li>Android / iOS (React Native)</li>
-                    </ul>
-                </div>
 
-                <!-- Карточка 2: Администрирование -->
-                <div class="skill-card">
-                    <h3>🐧 DevOps & Системы</h3>
-                    <ul class="skill-list">
-                        <li>Linux (Ubuntu Server)</li>
-                        <li>Сети (TCP/IP, DNS, DHCP)</li>
-                        <li>Docker & Контейнеризация</li>
-                        <li>Настройка веб-серверов</li>
-                    </ul>
-                </div>
-
-                <!-- Карточка 3: Hardware & Web -->
-                <div class="skill-card">
-                    <h3>⚙️ Hardware & Frontend</h3>
-                    <ul class="skill-list">
-                        <li>Сборка и диагностика ПК</li>
-                        <li>Траблшутинг железа</li>
-                        <li>HTML5 / CSS3</li>
-                        <li>Адаптивная верстка</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        <!-- Секция Навыков -->
+        <!-- Секция Компетенций -->
         <section id="skills" class="section">
-            <h2 class="section-title">Мой стек и <span class="highlight">навыки</span></h2>
+            <h2 class="section-title">Technical <span class="highlight">Expertise</span></h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <h3>🐧 Системное администрирование</h3>
-                    <p>Глубокое понимание Linux (Ubuntu), работа с командной строкой, настройка и конфигурация сетей (TCP/IP).</p>
+                    <h3>Infrastructure Administration</h3>
+                    <p>Deployment and maintenance of Linux (Ubuntu) servers. Design, configuration, and auditing of network architectures (TCP/IP stack, routing).</p>
                 </div>
                 <div class="skill-card">
-                    <h3>💻 Разработка ПО</h3>
-                    <p>Написание и доработка кода на C, C++, C# и JavaScript. Понимание принципов работы с памятью и ООП.</p>
+                    <h3>Software Development</h3>
+                    <p>Designing and writing fault-tolerant code (C, C++, C#, JavaScript). Development of web services and cross-platform mobile applications.</p>
                 </div>
                 <div class="skill-card">
-                    <h3>⚙️ Аппаратное обеспечение</h3>
-                    <p>Сборка и диагностика ПК, грамотный подбор комплектующих, оптимизация и стресс-тестирование железа.</p>
+                    <h3>Hardware Engineering</h3>
+                    <p>Auditing, diagnostics, and modernization of hardware complexes. Performance optimization and stress-testing of computing systems.</p>
                 </div>
             </div>
         </section>
 
         <!-- Секция Проектов -->
         <section id="portfolio" class="section">
-            <h2 class="section-title">Последние <span class="highlight">проекты</span></h2>
+            <h2 class="section-title">Implemented <span class="highlight">Solutions</span></h2>
             <div class="projects-grid">
                 <div class="project-card">
-                    <h3>Собственный сайт-портфолио</h3>
-                    <p>Адаптивный лендинг с современным дизайном, написанный на связке HTML/CSS/JS + Node.js бэкенд.</p>
+                    <h3>Corporate Web Resource / Portfolio</h3>
+                    <p>Architecture and full-stack development of a web application. Frontend: HTML5, CSS3, JS. Backend: Node.js with external API and Telegram integration.</p>
                 </div>
                 <div class="project-card">
-                    <h3>Мобильное приложение (в разработке)</h3>
-                    <p>Трекер активности под Android/iOS с использованием современных фреймворков.</p>
+                    <h3>Cross-Platform Application</h3>
+                    <p>Architecture design and UI/UX implementation for iOS and Android platforms. Working with local storage and asynchronous request processing.</p>
                 </div>
             </div>
         </section>
 
         <!-- Секция Контактов (Форма) -->
         <section id="contact" class="section">
-            <h2 class="section-title">Готов к <span class="highlight">сотрудничеству</span></h2>
+            <h2 class="section-title">Have questions or <span class="highlight">a project?</span></h2>
             <form id="contact-form" class="contact-form">
-                <input type="text" id="name" placeholder="Ваше имя" required>
-                <input type="email" id="email" placeholder="Ваш Email" required>
-                <textarea id="message" rows="5" placeholder="Опишите вашу задачу..." required></textarea>
-                <button type="submit" class="btn">Отправить сообщение</button>
+                <input type="text" id="name" placeholder="Full Name / Company Name" required>
+                <input type="email" id="email" placeholder="Contact Email" required>
+                <textarea id="message" rows="5" placeholder="Brief description of your task or inquiry..." required></textarea>
+                <button type="submit" class="btn">Submit Request</button>
             </form>
         </section>
     </main>
