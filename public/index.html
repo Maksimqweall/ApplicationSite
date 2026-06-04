@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maksym | IT-Специалист & Разработчик</title>
+    
+    <!-- 1. Подключаем Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Выбираем Poppins (начертания 600, 700 для заголовков) и Inter (400, 500 для текста) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- 2. Твой файл со стилями -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">Maksym.dev</div>
+            <ul class="nav-links">
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#skills">Навыки</a></li>
+                <li><a href="#portfolio">Проекты</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <h1>Привет! Я Максим, <br> <span class="highlight">IT-Специалист и Разработчик</span></h1>
+            <p>Решаю технические задачи: от администрирования сетей до создания современных веб-приложений.</p>
+            <button class="btn">Связаться со мной</button>
+        </section>
+        <!-- Секция Навыков -->
+        <section class="skills-section" id="skills">
+            <h2 class="section-title">Мой <span class="highlight">Стек</span> Технологий</h2>
+            
+            <div class="skills-grid">
+                <!-- Карточка 1: Программирование -->
+                <div class="skill-card">
+                    <h3>💻 Разработка & Мобайл</h3>
+                    <ul class="skill-list">
+                        <li>C / C++</li>
+                        <li>C# / .NET</li>
+                        <li>JavaScript (ES6+)</li>
+                        <li>Android / iOS (React Native)</li>
+                    </ul>
+                </div>
+
+                <!-- Карточка 2: Администрирование -->
+                <div class="skill-card">
+                    <h3>🐧 DevOps & Системы</h3>
+                    <ul class="skill-list">
+                        <li>Linux (Ubuntu Server)</li>
+                        <li>Сети (TCP/IP, DNS, DHCP)</li>
+                        <li>Docker & Контейнеризация</li>
+                        <li>Настройка веб-серверов</li>
+                    </ul>
+                </div>
+
+                <!-- Карточка 3: Hardware & Web -->
+                <div class="skill-card">
+                    <h3>⚙️ Hardware & Frontend</h3>
+                    <ul class="skill-list">
+                        <li>Сборка и диагностика ПК</li>
+                        <li>Траблшутинг железа</li>
+                        <li>HTML5 / CSS3</li>
+                        <li>Адаптивная верстка</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <!-- Секция Навыков -->
+        <section id="skills" class="section">
+            <h2 class="section-title">Мой стек и <span class="highlight">навыки</span></h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>🐧 Системное администрирование</h3>
+                    <p>Глубокое понимание Linux (Ubuntu), работа с командной строкой, настройка и конфигурация сетей (TCP/IP).</p>
+                </div>
+                <div class="skill-card">
+                    <h3>💻 Разработка ПО</h3>
+                    <p>Написание и доработка кода на C, C++, C# и JavaScript. Понимание принципов работы с памятью и ООП.</p>
+                </div>
+                <div class="skill-card">
+                    <h3>⚙️ Аппаратное обеспечение</h3>
+                    <p>Сборка и диагностика ПК, грамотный подбор комплектующих, оптимизация и стресс-тестирование железа.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция Проектов -->
+        <section id="portfolio" class="section">
+            <h2 class="section-title">Последние <span class="highlight">проекты</span></h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3>Собственный сайт-портфолио</h3>
+                    <p>Адаптивный лендинг с современным дизайном, написанный на связке HTML/CSS/JS + Node.js бэкенд.</p>
+                </div>
+                <div class="project-card">
+                    <h3>Мобильное приложение (в разработке)</h3>
+                    <p>Трекер активности под Android/iOS с использованием современных фреймворков.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Секция Контактов (Форма) -->
+        <section id="contact" class="section">
+            <h2 class="section-title">Готов к <span class="highlight">сотрудничеству</span></h2>
+            <form id="contact-form" class="contact-form">
+                <input type="text" id="name" placeholder="Ваше имя" required>
+                <input type="email" id="email" placeholder="Ваш Email" required>
+                <textarea id="message" rows="5" placeholder="Опишите вашу задачу..." required></textarea>
+                <button type="submit" class="btn">Отправить сообщение</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Подключаем наш скрипт перед закрывающим тегом body -->
+    <script src="script.js"></script>
+</body>
+</html>
