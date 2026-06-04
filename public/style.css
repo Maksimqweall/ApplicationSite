@@ -299,3 +299,36 @@ h1, h2, h3 {
 .contact-form input:focus, .contact-form textarea:focus {
     border-color: var(--accent-color);
 }
+
+/* =========================================
+   6. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ (Toast)
+   ========================================= */
+.toast {
+    position: fixed;
+    bottom: -100px; /* Спрятано за нижним краем экрана */
+    right: 30px;
+    background-color: var(--bg-accent);
+    color: var(--text-primary);
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-family: var(--font-body);
+    font-weight: 500;
+    z-index: 2000;
+    /* Пружинящая анимация выезда */
+    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Класс, который JS будет добавлять для показа */
+.toast.show {
+    bottom: 30px; 
+}
+
+/* Декоративная линия слева в зависимости от статуса */
+.toast.success {
+    border-left: 4px solid #10B981; /* Изумрудно-зеленый */
+}
+
+.toast.error {
+    border-left: 4px solid #EF4444; /* Красный */
+}
