@@ -1,97 +1,188 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maksym | IT-Specialist & Developer</title>
-    
-    <!-- 1. Подключаем Google Fonts -->
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Выбираем Poppins (начертания 600, 700 для заголовков) и Inter (400, 500 для текста) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-
-    <!-- 2. Твой файл со стилями -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Шапка и Навигация -->
     <header class="header">
         <nav class="nav">
-            <!-- Логотип теперь работает как кнопка "Наверх" -->
-            <a href="#" class="logo">Maksym.dev</a>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Expertise</a></li>
-                <li><a href="#portfolio">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
+            <a href="/" id="logo-link" class="logo">Maksym.dev</a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#about" class="nav-home-link">About</a></li>
+                <li><a href="#skills" class="nav-home-link">Expertise</a></li
+                <li><a href="#portfolio" class="nav-home-link">Projects</a></li>
+                <li><a href="#contact" class="nav-home-link">Contact</a></li>
+                <li><a href="#" id="open-auth" class="highlight">Login</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <!-- Герой-секция -->
+    <main id="landing-page">
         <section class="hero" id="about">
             <h1>IT Engineering & <br> <span class="highlight">Software Development</span></h1>
             <p>Design, development, and administration of IT infrastructure. A comprehensive approach to solving technical business challenges.</p>
             <a href="#contact" class="btn">Discuss a Project</a>
         </section>
 
-        <!-- Секция Компетенций -->
         <section id="skills" class="section">
             <h2 class="section-title">Technical <span class="highlight">Expertise</span></h2>
             <div class="skills-grid">
                 <div class="skill-card">
                     <h3>Infrastructure Administration</h3>
-                    <p>Deployment and maintenance of Linux (Ubuntu) servers. Design, configuration, and auditing of network architectures (TCP/IP stack, routing).</p>
+                    <p>Deployment and maintenance of Linux (Ubuntu) servers. Design, configuration, and auditing of network architectures.</p>
                 </div>
                 <div class="skill-card">
                     <h3>Software Development</h3>
-                    <p>Designing and writing fault-tolerant code (C, C++, C#, JavaScript). Development of web services and cross-platform mobile applications.</p>
+                    <p>Designing and writing fault-tolerant code (C, C++, C#, JavaScript). Development of cross-platform applications.</p>
                 </div>
                 <div class="skill-card">
                     <h3>Hardware Engineering</h3>
-                    <p>Auditing, diagnostics, and modernization of hardware complexes. Performance optimization and stress-testing of computing systems.</p>
+                    <p>Auditing, diagnostics, and modernization of hardware complexes. Stress-testing of computing systems.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Секция Проектов -->
         <section id="portfolio" class="section">
             <h2 class="section-title">Implemented <span class="highlight">Solutions</span></h2>
             <div class="projects-grid">
                 <div class="project-card">
                     <h3>Corporate Web Resource / Portfolio</h3>
-                    <p>Architecture and full-stack development of a web application. Frontend: HTML5, CSS3, JS. Backend: Node.js with external API and Telegram integration.</p>
+                    <p>Architecture and full-stack development. Frontend: HTML5, CSS3, JS. Backend: Node.js with Telegram integration.</p>
                 </div>
                 <div class="project-card">
                     <h3>Cross-Platform Application</h3>
-                    <p>Architecture design and UI/UX implementation for iOS and Android platforms. Working with local storage and asynchronous request processing.</p>
+                    <p>Architecture design and UI/UX implementation for iOS and Android platforms.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Секция Контактов (Форма) -->
         <section id="contact" class="section">
             <h2 class="section-title">Have questions or <span class="highlight">a project?</span></h2>
             <form id="contact-form" class="contact-form">
                 <input type="text" id="name" placeholder="Full Name / Company Name" required>
                 <input type="email" id="email" placeholder="Contact Email" required>
-                <textarea id="message" rows="5" placeholder="Brief description of your task or inquiry..." required></textarea>
+                <textarea id="message" rows="5" placeholder="Brief description..." required></textarea>
                 <button type="submit" class="btn">Submit Request</button>
             </form>
         </section>
     </main>
 
-    <!-- Подключаем наш скрипт перед закрывающим тегом body -->
-    <script src="script.js"></script>
-    <!-- Всплывающее уведомление -->
-    <div id="toast" class="toast"></div>
+   <section id="profile-page" class="section profile-page" style="display: none;">
+        <div class="profile-grid">
+            
+            <div class="profile-sidebar card">
+                <div class="profile-avatar-container">
+                    <img id="profile-photo" src="" alt="Avatar" style="display: none;">
+                    <div class="avatar-circle" id="profile-avatar-fallback">
+                        <span id="avatar-letter">U</span>
+                    </div>
+                </div>
+                
+                <h2 id="profile-username">Username</h2>
+                <p id="profile-location" class="profile-location">🌍 Berlin, Germany</p>
+                <p class="status-text">Available for work</p>
+                
+                <button id="open-edit-profile-btn" class="btn btn-sm btn-full">Edit Profile</button>
+                <button id="logout-btn" class="logout-btn mt-10">Logout</button>
 
-    <!-- Подключаем наш скрипт перед закрывающим тегом body -->
+                <div class="profile-divider"></div>
+
+                <div class="profile-info-block">
+                    <h3>Skills</h3>
+                    <div id="profile-skills" class="skills-tags">
+                        </div>
+                </div>
+
+                <div class="profile-info-block">
+                    <h3>Contacts</h3>
+                    <div id="profile-contacts" class="contact-links">
+                        </div>
+                </div>
+            </div>
+
+            <div class="profile-main">
+                <div class="card mb-20">
+                    <h2>About Me</h2>
+                    <p id="profile-bio-text" class="bio-text">No description provided yet.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Project Workspace</h2>
+                    <p>Manage your tasks and infrastructure updates.</p>
+                    <form id="add-task-form" class="add-task-form">
+                        <input type="text" id="task-input" placeholder="New task..." required>
+                        <button type="submit" class="btn btn-sm">Add</button>
+                    </form>
+                    <ul id="task-list" class="task-list"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content profile-edit-content">
+            <span class="close-btn" id="close-edit-modal">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="edit-profile-form" class="auth-form active-form">
+                <label>Profile Photo (Max 2MB)</label>
+                <input type="file" id="edit-photo" accept="image/png, image/jpeg, image/webp">
+                
+                <div id="crop-container" style="display: none; width: 100%; height: 300px; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2);">
+                    <img id="crop-image" src="" style="max-width: 100%; display: block;">
+                </div>
+                
+                <label>Location</label>
+                <input type="text" id="edit-location" placeholder="e.g. Berlin, Germany">
+                
+                <label>Skills (comma separated)</label>
+                <input type="text" id="edit-skills" placeholder="Linux, JavaScript, C++">
+                
+                <label>Telegram Username</label>
+                <input type="text" id="edit-telegram" placeholder="@username">
+                
+                <label>GitHub Profile URL</label>
+                <input type="text" id="edit-github" placeholder="https://github.com/...">
+                
+                <label>About Me</label>
+                <textarea id="edit-bio" rows="4" placeholder="Tell about your experience..."></textarea>
+                
+                <button type="submit" class="btn btn-full">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login">Login</button>
+                <button class="tab-btn" id="tab-register">Register</button>
+            </div>
+            <form id="login-form" class="auth-form active-form">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <form id="register-form" class="auth-form">
+                <input type="text" id="reg-username" placeholder="Choose Username" required>
+                <input type="password" id="reg-password" placeholder="Create Password" required>
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
     <script src="script.js"></script>
-</body>
-</html>
 </body>
 </html>
