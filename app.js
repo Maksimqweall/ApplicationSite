@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
@@ -6,6 +7,15 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { PrismaClient } = require('@prisma/client'); // Подключаем Prisma
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
+
+// Настраиваем Cloudinary ключами из .env
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const prisma = new PrismaClient(); // Инициализируем базу данных
 const app = express();
@@ -19,18 +29,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Настройка Multer для сохранения фото (пока оставляем локально)
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadDir),
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${req.user.username}-${Date.now()}${ext}`);
-    }
-});
-const upload = multer({ storage });
+// Сохранение только в память 
+const upload = multer({ storage: multer.memoryStorage() });
 
 // MIDDLEWARE ДЛЯ ПРОВЕРКИ JWT ТОКЕНА
 const authMiddleware = (req, res, next) => {
@@ -118,8 +119,27 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
             github: github || ""
         };
 
+        // Если прилетел новый файл фото
         if (req.file) {
-            updateData.photo = '/uploads/' + req.file.filename;
+            // Функция для загрузки буфера напрямую в Cloudinary
+            const uploadFromBuffer = (req) => {
+                return new Promise((resolve, reject) => {
+                    const cld_upload_stream = cloudinary.uploader.upload_stream(
+                        { folder: "portfolio_avatars" }, // Папка внутри твоего Cloudinary
+                        (error, result) => {
+                            if (result) { resolve(result); }
+                            else { reject(error); }
+                        }
+                    );
+                    streamifier.createReadStream(req.file.buffer).pipe(cld_upload_stream);
+                });
+            };
+
+            // Ждем завершения загрузки в облако
+            const result = await uploadFromBuffer(req);
+            
+            // Сохраняем в базу данных красивую и вечную ссылку от Cloudinary
+            updateData.photo = result.secure_url; 
         }
 
         // Обновляем данные пользователя в БД
@@ -129,7 +149,10 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
         });
 
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error("Profile update error:", error);
+        res.status(500).json({ success: false }); 
+    }
 });
 
 app.post('/api/tasks', authMiddleware, async (req, res) => {
