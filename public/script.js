@@ -4,17 +4,40 @@
 
 const PRESETS = {
     meals: [
-        { name: "Овсянка", kcalPer100g: 370 },
-        { name: "Куриная грудка", kcalPer100g: 165 },
-        { name: "Рис (отварной)", kcalPer100g: 130 },
-        { name: "Творог 5%", kcalPer100g: 121 },
-        { name: "Яйца", kcalPer100g: 155 }
+        // Proteins
+        { name: "Chicken Breast", kcalPer100g: 165 },
+        { name: "Salmon", kcalPer100g: 208 },
+        { name: "Lean Beef", kcalPer100g: 250 },
+        { name: "Egg", kcalPer100g: 155 },
+        { name: "Cottage Cheese 5%", kcalPer100g: 98 },
+        { name: "Whey Protein", kcalPer100g: 370 },
+        // Carbs
+        { name: "Oatmeal (dry)", kcalPer100g: 370 },
+        { name: "White Rice (cooked)", kcalPer100g: 130 },
+        { name: "Brown Rice (cooked)", kcalPer100g: 111 },
+        { name: "Sweet Potato", kcalPer100g: 86 },
+        { name: "Banana", kcalPer100g: 89 },
+        // Fats & Others
+        { name: "Almonds", kcalPer100g: 579 },
+        { name: "Peanut Butter", kcalPer100g: 588 },
+        { name: "Greek Yogurt", kcalPer100g: 60 }
     ],
     workouts: [
-        { title: "Жим лежа", notes: "4x10, 60kg" },
-        { title: "Приседания", notes: "3x12, 80kg" },
-        { title: "Становая тяга", notes: "3x8, 100kg" },
-        { title: "Кардио", notes: "30 мин бег" }
+        // Push
+        { title: "Bench Press", notes: "4 sets x 8-10 reps" },
+        { title: "Overhead Press", notes: "3 sets x 10 reps" },
+        { title: "Tricep Pushdowns", notes: "3 sets x 12-15 reps" },
+        // Pull
+        { title: "Pull-ups", notes: "3 sets to failure" },
+        { title: "Barbell Rows", notes: "4 sets x 8 reps" },
+        { title: "Bicep Curls", notes: "3 sets x 12 reps" },
+        // Legs
+        { title: "Barbell Squat", notes: "4 sets x 8 reps" },
+        { title: "Deadlift", notes: "3 sets x 5 reps" },
+        { title: "Leg Press", notes: "3 sets x 12 reps" },
+        // Cardio
+        { title: "Running", notes: "30 min steady pace" },
+        { title: "Cycling", notes: "45 min moderate intensity" }
     ]
 };
 const form = document.getElementById('contact-form');
@@ -86,6 +109,41 @@ const addMealForm = document.getElementById('add-meal-form');
 const totalCaloriesDisplay = document.getElementById('total-calories-display');
 
 let currentUsername = '';
+
+if (addMealForm) {
+    addMealForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Берем имя продукта и УЖЕ ПОСЧИТАННЫЕ калории из нашей функции
+        const itemName = document.getElementById('meal-name').value;
+        const calories = window.calculateKcal(); 
+        
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch('/api/meals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ itemName, calories })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                // Очищаем форму после успешного добавления
+                document.getElementById('meal-name').value = '';
+                document.getElementById('meal-weight').value = '';
+                document.getElementById('meal-preset').value = '';
+                document.getElementById('calculated-kcal').textContent = '0 kcal';
+                
+                await loadUserData(); // Перезагружаем интерфейс
+            } else {
+                showToast('Failed to add meal', 'error');
+            }
+        } catch (error) { 
+            showToast('Server error', 'error'); 
+        }
+    });
+}
 
 function showLandingView(updateHistory = true) {
     profilePage.style.display = 'none';
@@ -472,3 +530,56 @@ function initPresets() {
         workoutSelect.innerHTML += `<option value="${index}">${w.title}</option>`;
     });
 }
+
+// =========================================
+// ЛОГИКА КАЛЬКУЛЯТОРА И ПРЕСЕТОВ
+// =========================================
+
+// 1. Автозаполнение еды при выборе из списка
+window.fillMealPreset = function() {
+    const select = document.getElementById('meal-preset');
+    const index = select.value;
+    if (index === "") return;
+    
+    const meal = PRESETS.meals[index];
+    document.getElementById('meal-name').value = meal.name;
+    document.getElementById('meal-weight').value = 100; // Ставим 100г по умолчанию
+    window.calculateKcal(); // Автоматически считаем
+};
+
+// 2. Расчет калорий "на лету" при вводе граммов
+window.calculateKcal = function() {
+    const weight = document.getElementById('meal-weight').value;
+    const select = document.getElementById('meal-preset');
+    const display = document.getElementById('calculated-kcal');
+    
+    // Если поле пустое, сбрасываем
+    if (!weight || weight <= 0) {
+        display.textContent = "0 kcal";
+        return 0;
+    }
+
+    // Если продукт выбран из базы
+    if (select.value !== "") {
+        const meal = PRESETS.meals[select.value];
+        const result = Math.round((meal.kcalPer100g / 100) * weight);
+        display.textContent = result + " kcal";
+        return result; 
+    } else {
+        // Если продукта нет в базе, пользователь может просто написать "Яблоко" 
+        // и ввести 150 в поле граммов, мы посчитаем это как 150 ккал.
+        display.textContent = weight + " kcal";
+        return Number(weight);
+    }
+};
+
+// 3. Автозаполнение тренировок
+window.fillWorkoutPreset = function() {
+    const select = document.getElementById('workout-preset');
+    const index = select.value;
+    if (index === "") return;
+
+    const workout = PRESETS.workouts[index];
+    document.getElementById('workout-title').value = workout.title;
+    document.getElementById('workout-notes').value = workout.notes;
+};

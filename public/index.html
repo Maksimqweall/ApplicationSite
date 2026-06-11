@@ -17,7 +17,7 @@
         <nav class="nav">
             <a href="/" id="logo-link" class="logo">FitTrack.app</a>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#features" class="nav-home-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-home-link">Features</a></li>
                 <li><a href="#how-it-works" class="nav-home-link">How it Works</a></li>
                 <li><a href="#contact" class="nav-home-link">Support</a></li>
                 <li><a href="#" id="open-auth" class="highlight">Login</a></li>
@@ -27,25 +27,32 @@
 
     <main id="landing-page">
         <section class="hero" id="about">
-            <h1>Track Your Macros & <br> <span class="highlight">Conquer Your Split</span></h1>
-            <p>The ultimate all-in-one dashboard to manage your workout routines, track daily caloric intake, and log your supplement stack.</p>
-            <a href="#contact" class="btn">Get Early Access</a>
+            <h1>Your Personal <br><span class="highlight">Fitness Architect</span></h1>
+            <p>A smart workout and nutrition tracker designed to eliminate chaos from your daily routine. Build your physique, track macros, and monitor progress effortlessly.</p>
+            <div class="hero-actions">
+                <a href="#" id="landing-cta-btn" class="btn" onclick="document.getElementById('open-auth').click(); return false;">Get Started</a>
+                <a href="#how-it-works" class="btn btn-secondary">How it works</a>
+            </div>
         </section>
 
-        <section id="features" class="section">
-            <h2 class="section-title">Smart <span class="highlight">Features</span></h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <h3>Workout Split Planner</h3>
-                    <p>Log your routines down to the set. Easily structure your weekly regimens and track progressive overload.</p>
+        <section id="how-it-works" class="section sales-section">
+            <h2 class="section-title">Why <span class="highlight">FitTrack</span> changes the game</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Minimal Clicks, Maximum Data</h3>
+                    <p>Stop wasting time. Our preset database allows you to log meals and workouts in seconds—not minutes.</p>
                 </div>
-                <div class="skill-card">
-                    <h3>Calorie & Macro Logging</h3>
-                    <p>Keep a detailed diary of your meals. Sum up your daily caloric intake instantly without complex spreadsheets.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Precision Nutrition</h3>
+                    <p>Input your food weight in grams, and get instant, accurate caloric feedback. No more guessing games.</p>
                 </div>
-                <div class="skill-card">
-                    <h3>Supplement Tracker</h3>
-                    <p>Never miss a dose. Track your daily intake of vitamins, minerals, and performance enhancers.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>Your Strength History</h3>
+                    <p>Your training performance is always at your fingertips. Analyze your splits and crush new personal bests.</p>
                 </div>
             </div>
         </section>
@@ -83,14 +90,12 @@
 
                 <div class="profile-info-block">
                     <h3>Fitness Goals / Focus</h3>
-                    <div id="profile-skills" class="skills-tags">
-                        </div>
+                    <div id="profile-skills" class="skills-tags"></div>
                 </div>
 
                 <div class="profile-info-block">
                     <h3>Connect</h3>
-                    <div id="profile-contacts" class="contact-links">
-                        </div>
+                    <div id="profile-contacts" class="contact-links"></div>
                 </div>
             </div>
 
@@ -101,15 +106,14 @@
                         <h2>🏋️‍♂️ Workout Split Planner</h2>
                     </div>
                     <form id="add-workout-form" class="tracker-form">
-                        <input type="text" id="workout-title" placeholder="e.g., Arnold x PPL - Chest & Back" required>
-                        <input type="text" id="workout-notes" placeholder="Notes (e.g., 4x12 Incline Press)">
                         <select id="workout-preset" onchange="fillWorkoutPreset()">
-                        <option value="">-- Choose from Preset --</option>
+                            <option value="">-- Choose from database --</option>
                         </select>
+                        <input type="text" id="workout-title" placeholder="Exercise name (e.g., Bench Press)" required>
+                        <input type="text" id="workout-notes" placeholder="Notes (e.g., 4 sets x 10 reps)">
                         <button type="submit" class="btn btn-sm">Log Workout</button>
                     </form>
-                    <ul id="workout-list" class="item-list">
-                        </ul>
+                    <ul id="workout-list" class="item-list"></ul>
                 </div>
 
                 <div class="card dashboard-block">
@@ -119,16 +123,18 @@
                             <span id="total-calories-display">0</span> kcal
                         </div>
                     </div>
-                    <form id="add-meal-form" class="tracker-form dual-input">
-                        <input type="text" id="meal-name" placeholder="e.g., Chicken Teriyaki or Ashwagandha" required>
-                        <input type="number" id="meal-calories" placeholder="Calories (e.g., 450)" min="0" required>
+                    <form id="add-meal-form" class="tracker-form">
                         <select id="meal-preset" onchange="fillMealPreset()">
-                        <option value="">-- Choose from Preset --</option>
+                            <option value="">-- Choose from database --</option>
                         </select>
+                        <div class="dual-input">
+                            <input type="text" id="meal-name" placeholder="Product name" required>
+                            <input type="number" id="meal-weight" placeholder="Weight (g)" oninput="calculateKcal()" required>
+                            <span id="calculated-kcal" style="font-weight: bold; color: #10B981;">0 kcal</span>
+                        </div>
                         <button type="submit" class="btn btn-sm btn-green">Add Item</button>
                     </form>
-                    <ul id="meal-list" class="item-list">
-                        </ul>
+                    <ul id="meal-list" class="item-list"></ul>
                 </div>
 
             </div>
@@ -139,7 +145,7 @@
         <div class="modal-content profile-edit-content">
             <span class="close-btn" id="close-edit-modal">&times;</span>
             <h2>Edit Profile</h2>
-           <form id="edit-profile-form" class="auth-form active-form" enctype="multipart/form-data">
+            <form id="edit-profile-form" class="auth-form active-form" enctype="multipart/form-data">
                 <label>Profile Photo (Max 2MB)</label>
                 <input type="file" id="edit-photo" accept="image/png, image/jpeg, image/webp">
                 
