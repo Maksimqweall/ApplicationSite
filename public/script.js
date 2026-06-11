@@ -11,6 +11,7 @@ function showToast(message, type = 'success') {
     setTimeout(() => { toast.className = 'toast'; }, 3500);
 }
 
+// Отправка формы в Telegram
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value;
@@ -41,7 +42,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 // =========================================
-// 2. УПРАВЛЕНИЕ МАРШРУТАМИ И АВТОРИЗАЦИЕЙ (SPA)
+// 2. ИНТЕРФЕЙС И РОУТИНГ (SPA)
 // =========================================
 const modal = document.getElementById('auth-modal');
 const openAuthBtn = document.getElementById('open-auth');
@@ -58,95 +59,89 @@ const homeLinks = document.querySelectorAll('.nav-home-link');
 
 const profileUsername = document.getElementById('profile-username');
 const avatarLetter = document.getElementById('avatar-letter');
-const bioInput = document.getElementById('bio-input');
-const saveProfileBtn = document.getElementById('save-profile-btn');
+const profilePhoto = document.getElementById('profile-photo');
+const profileAvatarFallback = document.getElementById('profile-avatar-fallback');
+const profileLocation = document.getElementById('profile-location');
+const profileBioText = document.getElementById('profile-bio-text');
+const profileSkills = document.getElementById('profile-skills');
+const profileContacts = document.getElementById('profile-contacts');
+
 const taskList = document.getElementById('task-list');
 const addTaskForm = document.getElementById('add-task-form');
 const logoutBtn = document.getElementById('logout-btn');
 
-// Хранилище текущего имени пользователя в сессии фронтенда
 let currentUsername = '';
 
-// Переключение на ГЛАВНУЮ страницу (БЕЗ разлогина)
+// Переключение на Главную
 function showLandingView(updateHistory = true) {
     profilePage.style.display = 'none';
     landingPage.style.display = 'block';
-    if (updateHistory) {
-        window.history.pushState({ view: 'home' }, '', '/');
-    }
+    if (updateHistory) window.history.pushState({ view: 'home' }, '', '/');
 }
 
-// Переключение на страницу ПРОФИЛЯ
+// Переключение на Профиль
 function showProfileView(updateHistory = true) {
-    if (!localStorage.getItem('token')) return;
+    if (!currentUsername) return; // Защита: пускаем только если есть имя пользователя
     landingPage.style.display = 'none';
     profilePage.style.display = 'block';
-    if (updateHistory && currentUsername) {
-        window.history.pushState({ view: 'profile' }, '', '/' + currentUsername);
-    }
+    if (updateHistory) window.history.pushState({ view: 'profile' }, '', '/' + currentUsername);
 }
 
-// Клик по логотипу (возврат в самое начало)
+// Навигация по меню
 logoLink.addEventListener('click', (e) => {
-    e.preventDefault(); // Запрещаем стандартный переход
-    
-    showLandingView(false); // Показываем главную страницу
-    window.history.pushState({ view: 'home' }, '', '/'); // Ставим чистый URL
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Плавно едем наверх
+    e.preventDefault();
+    showLandingView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Клик по ссылкам меню (About, Expertise, Projects, Contact)
 homeLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault(); // Запрещаем браузеру делать кривую ссылку /hui#skills
-        
-        // 1. Включаем отображение лендинга (прячем профиль)
-        showLandingView(false); 
-        
-        // 2. Достаем якорь из ссылки (например, "#skills" или "#portfolio")
+        e.preventDefault();
+        showLandingView(false);
         const targetHash = link.getAttribute('href');
-        
-        // 3. Принудительно ставим красивый URL от корня: http://localhost:3000/#skills
         window.history.pushState({ view: 'home' }, '', '/' + targetHash);
-        
-        // 4. Ищем нужный блок на странице и плавно прокручиваем к нему
         const targetSection = document.querySelector(targetHash);
-        if (targetSection) {
-            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
-// Клик по кнопке Профиль / Логин
+// Клик по кнопке Login в шапке
 openAuthBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (localStorage.getItem('token')) {
-        // Если авторизован, просто прыгаем в профиль
-        showProfileView();
+    if (currentUsername) {
+        showProfileView(); // Если уже ввели логин в этой сессии — пускаем
     } else {
-        // Если нет, открываем модалку для входа
-        modal.classList.add('show');
+        modal.classList.add('show'); // Иначе — требуем логин
     }
 });
 
 closeModalBtn.addEventListener('click', () => modal.classList.remove('show'));
 window.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
 
-// Переключение вкладок в модалке
 tabLogin.addEventListener('click', () => {
     tabLogin.classList.add('active'); tabRegister.classList.remove('active');
     loginForm.classList.add('active-form'); registerForm.classList.remove('active-form');
 });
 tabRegister.addEventListener('click', () => {
     tabRegister.classList.add('active'); tabLogin.classList.remove('active');
-    registerForm.classList.add('active-form'); loginForm.classList.add('active-form');
+    registerForm.classList.add('active-form'); loginForm.classList.remove('active-form');
 });
 
-// Регистрация
+// =========================================
+// 3. ЛОГИКА АВТОРИЗАЦИИ
+// =========================================
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('reg-username').value;
     const password = document.getElementById('reg-password').value;
+
+    // --- ВАЛИДАЦИЯ ПАРОЛЯ ПЕРЕД ОТПРАВКОЙ НА СЕРВЕР ---
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password)) {
+        showToast('Password must be 8+ chars, include uppercase, lowercase & number.', 'error');
+        return; // Останавливаем выполнение, сервер даже не потревожим
+    }
+
     try {
         const response = await fetch('/register', {
             method: 'POST',
@@ -154,15 +149,20 @@ registerForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ username, password })
         });
         const data = await response.json();
+        
         if (data.success) {
             showToast('Registration successful! Please login.', 'success');
             registerForm.reset();
             tabLogin.click();
-        } else { showToast(data.message, 'error'); }
-    } catch (error) { showToast('Server error', 'error'); }
+        } else { 
+            // Показываем ошибку с сервера (например, если логин занят)
+            showToast(data.message, 'error'); 
+        }
+    } catch (error) { 
+        showToast('Server error', 'error'); 
+    }
 });
 
-// Логин
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('login-username').value;
@@ -180,14 +180,13 @@ loginForm.addEventListener('submit', async (e) => {
             modal.classList.remove('show');
             loginForm.reset();
             
-            // Загружаем данные и сразу открываем вид профиля
             await loadUserData();
             showProfileView();
         } else { showToast(data.message, 'error'); }
     } catch (error) { showToast('Server error', 'error'); }
 });
 
-// Загрузка данных пользователя из бэкенда
+// Загрузка данных профиля
 async function loadUserData() {
     const token = localStorage.getItem('token');
     if (!token) return false;
@@ -202,11 +201,44 @@ async function loadUserData() {
         if (data.success) {
             currentUsername = data.username;
             profileUsername.textContent = data.username;
-            avatarLetter.textContent = data.username.charAt(0).toUpperCase();
-            bioInput.value = data.bio;
             openAuthBtn.textContent = 'My Profile';
 
-            // Рендер задач
+            if (data.photo && data.photo.trim() !== '') {
+                profilePhoto.src = data.photo;
+                profilePhoto.style.display = 'block';
+                profileAvatarFallback.style.display = 'none';
+            } else {
+                profilePhoto.style.display = 'none';
+                profileAvatarFallback.style.display = 'flex';
+                document.getElementById('avatar-letter').textContent = data.username.charAt(0).toUpperCase();
+            }
+
+            profileLocation.textContent = data.location ? `🌍 ${data.location}` : '🌍 Not specified';
+            profileBioText.textContent = data.bio ? data.bio : 'No description provided yet.';
+            
+            document.getElementById('edit-location').value = data.location || '';
+            document.getElementById('edit-bio').value = data.bio || '';
+            document.getElementById('edit-skills').value = data.skills || '';
+            document.getElementById('edit-telegram').value = data.telegram || '';
+            document.getElementById('edit-github').value = data.github || '';
+
+            profileSkills.innerHTML = '';
+            if (data.skills) {
+                data.skills.split(',').map(s => s.trim()).filter(s => s !== '').forEach(skill => {
+                    const span = document.createElement('span');
+                    span.className = 'skill-chip';
+                    span.textContent = skill;
+                    profileSkills.appendChild(span);
+                });
+            } else {
+                profileSkills.innerHTML = '<span class="text-secondary">No skills added</span>';
+            }
+
+            profileContacts.innerHTML = '';
+            if (data.telegram) profileContacts.innerHTML += `<a href="https://t.me/${data.telegram.replace('@', '')}" target="_blank">✈️ Telegram</a>`;
+            if (data.github) profileContacts.innerHTML += `<a href="${data.github}" target="_blank">🐙 GitHub</a>`;
+            if (!data.telegram && !data.github) profileContacts.innerHTML = '<span class="text-secondary">No contacts added</span>';
+
             taskList.innerHTML = '';
             data.tasks.forEach(task => {
                 const li = document.createElement('li');
@@ -243,162 +275,91 @@ addTaskForm.addEventListener('submit', async (e) => {
     } catch (error) { showToast('Server error', 'error'); }
 });
 
-// Элементы нового профиля
-const profilePhoto = document.getElementById('profile-photo');
-const profileAvatarFallback = document.getElementById('profile-avatar-fallback');
-const profileLocation = document.getElementById('profile-location');
-const profileBioText = document.getElementById('profile-bio-text');
-const profileSkills = document.getElementById('profile-skills');
-const profileContacts = document.getElementById('profile-contacts');
+// =========================================
+// 4. ВЫХОД (LOGOUT) И ЖЕСТКИЙ СБРОС СЕССИИ
+// =========================================
+logoutBtn.addEventListener('click', () => {
+    clearAuthSession();
+    showLandingView();
+    showToast('Logged out successfully.', 'success');
+});
 
-// Элементы модалки редактирования
+function clearAuthSession() {
+    localStorage.removeItem('token'); // Удаляем токен из памяти
+    currentUsername = ''; // Стираем имя
+    openAuthBtn.textContent = 'Login'; // Возвращаем кнопку в исходное состояние
+}
+
+// ЖЕСТКИЙ СБРОС: При любом обновлении страницы (F5) мы стираем старые сессии
+window.addEventListener('DOMContentLoaded', () => {
+    clearAuthSession(); // Заставляем логиниться заново каждый раз!
+    
+    if (window.location.pathname !== '/') {
+        window.history.replaceState({}, '', '/');
+    }
+    showLandingView(false);
+});
+
+window.addEventListener('popstate', (e) => {
+    if (window.location.pathname === '/') {
+        showLandingView(false);
+    } else if (currentUsername) {
+        showProfileView(false);
+    } else {
+        showLandingView(false);
+    }
+});
+
+// =========================================
+// 5. ОБРЕЗКА ФОТО И СОХРАНЕНИЕ ПРОФИЛЯ
+// =========================================
 const editProfileModal = document.getElementById('edit-profile-modal');
 const openEditProfileBtn = document.getElementById('open-edit-profile-btn');
 const closeEditModalBtn = document.getElementById('close-edit-modal');
 const editProfileForm = document.getElementById('edit-profile-form');
 
-// Открытие и закрытие окна редактирования
-openEditProfileBtn.addEventListener('click', () => {
-    editProfileModal.classList.add('show');
-});
-closeEditModalBtn.addEventListener('click', () => editProfileModal.classList.remove('show'));
-window.addEventListener('click', (e) => { if (e.target === editProfileModal) editProfileModal.classList.remove('show'); });
-
-// ОБНОВЛЕННАЯ ФУНКЦИЯ: Загрузка и Рендер данных
-async function loadUserData() {
-    const token = localStorage.getItem('token');
-    if (!token) return false;
-
-    try {
-        const response = await fetch('/api/user-data', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await response.json();
-
-        if (data.success) {
-            currentUsername = data.username;
-            profileUsername.textContent = data.username;
-            openAuthBtn.textContent = 'My Profile';
-
-            // 1. Аватарка (показываем фото или букву)
-            if (data.photo && data.photo.trim() !== '') {
-                profilePhoto.src = data.photo;
-                profilePhoto.style.display = 'block';
-                profileAvatarFallback.style.display = 'none';
-            } else {
-                profilePhoto.style.display = 'none';
-                profileAvatarFallback.style.display = 'flex';
-                document.getElementById('avatar-letter').textContent = data.username.charAt(0).toUpperCase();
-            }
-
-            // 2. Текстовые данные
-            profileLocation.textContent = data.location ? `🌍 ${data.location}` : '🌍 Not specified';
-            profileBioText.textContent = data.bio ? data.bio : 'No description provided yet.';
-            
-            // Заполняем форму редактирования текущими данными
-            document.getElementById('edit-photo').value = data.photo || '';
-            document.getElementById('edit-location').value = data.location || '';
-            document.getElementById('edit-bio').value = data.bio || '';
-            document.getElementById('edit-skills').value = data.skills || '';
-            document.getElementById('edit-telegram').value = data.telegram || '';
-            document.getElementById('edit-github').value = data.github || '';
-
-            // 3. Рендер Навыков (разбиваем строку по запятым)
-            profileSkills.innerHTML = '';
-            if (data.skills) {
-                const skillsArray = data.skills.split(',').map(s => s.trim()).filter(s => s !== '');
-                skillsArray.forEach(skill => {
-                    const span = document.createElement('span');
-                    span.className = 'skill-chip';
-                    span.textContent = skill;
-                    profileSkills.appendChild(span);
-                });
-            } else {
-                profileSkills.innerHTML = '<span class="text-secondary">No skills added</span>';
-            }
-
-            // 4. Рендер Контактов
-            profileContacts.innerHTML = '';
-            if (data.telegram) {
-                profileContacts.innerHTML += `<a href="https://t.me/${data.telegram.replace('@', '')}" target="_blank">✈️ Telegram</a>`;
-            }
-            if (data.github) {
-                profileContacts.innerHTML += `<a href="${data.github}" target="_blank">🐙 GitHub</a>`;
-            }
-            if (!data.telegram && !data.github) {
-                profileContacts.innerHTML = '<span class="text-secondary">No contacts added</span>';
-            }
-
-            // Рендер задач (остается как было)
-            taskList.innerHTML = '';
-            data.tasks.forEach(task => {
-                const li = document.createElement('li');
-                li.textContent = task.text;
-                taskList.appendChild(li);
-            });
-            return true;
-        } else {
-            clearAuthSession();
-            return false;
-        }
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-}
-
-// =========================================
-// 4. ЛОГИКА ОБРЕЗКИ ФОТО (CROPPER.JS) И СОХРАНЕНИЕ
-// =========================================
 const photoInput = document.getElementById('edit-photo');
 const cropContainer = document.getElementById('crop-container');
 const cropImage = document.getElementById('crop-image');
-let cropper = null; // Переменная для хранения инструмента обрезки
+let cropper = null;
 
-// Слушаем выбор файла
+openEditProfileBtn.addEventListener('click', () => editProfileModal.classList.add('show'));
+closeEditModalBtn.addEventListener('click', () => editProfileModal.classList.remove('show'));
+window.addEventListener('click', (e) => { if (e.target === editProfileModal) editProfileModal.classList.remove('show'); });
+
 photoInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 1. Ограничение по размеру (2 МБ = 2 * 1024 * 1024 байт)
     if (file.size > 2 * 1024 * 1024) {
         showToast('File is too large! Maximum size is 2MB.', 'error');
-        photoInput.value = ''; // Сбрасываем выбор
+        photoInput.value = ''; 
         cropContainer.style.display = 'none';
         return;
     }
 
-    // 2. Показываем картинку
     const url = URL.createObjectURL(file);
     cropImage.src = url;
     cropContainer.style.display = 'block';
 
-    // 3. Если старый кроппер существует, удаляем его
-    if (cropper) {
-        cropper.destroy();
-    }
+    if (cropper) cropper.destroy();
 
-    // 4. Инициализируем редактор (Соотношение сторон строго 1:1 - квадрат)
     cropper = new Cropper(cropImage, {
         aspectRatio: 1,
-        viewMode: 1, // Ограничиваем рамку размерами картинки
-        dragMode: 'move', // Позволяем двигать картинку мышкой
+        viewMode: 1,
+        dragMode: 'move',
         background: false,
     });
 });
 
-// Вспомогательная функция для получения обрезанного файла
 function getCroppedBlob(cropperInstance) {
     return new Promise((resolve) => {
-        // Выдаем картинку размером 400x400 пикселей (идеально для аватарок)
         cropperInstance.getCroppedCanvas({ width: 400, height: 400 }).toBlob((blob) => {
             resolve(blob);
-        }, 'image/jpeg', 0.9); // Формат JPEG с качеством 90%
+        }, 'image/jpeg', 0.9);
     });
 }
 
-// СОХРАНЕНИЕ НОВЫХ ДАННЫХ ПРОФИЛЯ
 editProfileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -409,15 +370,11 @@ editProfileForm.addEventListener('submit', async (e) => {
 
     const formData = new FormData();
     
-    // Если пользователь загрузил и обрезал картинку
     if (cropper) {
-        // Ждем, пока кроппер сгенерирует финальный ровный файл
         const croppedBlob = await getCroppedBlob(cropper);
-        // Добавляем обрезанный файл в форму (притворяясь, что это обычный файл)
         formData.append('photo', croppedBlob, 'avatar.jpg');
     }
     
-    // Добавляем остальные текстовые данные
     formData.append('location', document.getElementById('edit-location').value);
     formData.append('skills', document.getElementById('edit-skills').value);
     formData.append('telegram', document.getElementById('edit-telegram').value);
@@ -434,14 +391,12 @@ editProfileForm.addEventListener('submit', async (e) => {
         
         if (data.success) {
             showToast('Profile updated successfully!', 'success');
-            
-            // Очищаем редактор после успешного сохранения
             if (cropper) { cropper.destroy(); cropper = null; }
             cropContainer.style.display = 'none';
             photoInput.value = '';
             
             editProfileModal.classList.remove('show');
-            await loadUserData(); // Обновляем профиль на экране
+            await loadUserData(); 
         } else {
             showToast('Failed to save profile', 'error');
         }

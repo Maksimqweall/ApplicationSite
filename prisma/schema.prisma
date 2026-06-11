@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Таблица пользователей
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  bio      String?
+  photo    String?
+  location String?
+  skills   String?
+  telegram String?
+  github   String?
+  tasks    Task[]  // Связь: у одного пользователя много задач
+}
+
+// Таблица задач
+model Task {
+  id     Int    @id @default(autoincrement())
+  text   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+}
