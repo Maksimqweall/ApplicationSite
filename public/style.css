@@ -687,3 +687,142 @@ h1, h2, h3 {
     margin-bottom: 20px;
     text-align: center;
 }
+
+/* =========================================
+   10. APP DASHBOARD (FITNESS & CALORIES)
+   ========================================= */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.dashboard-header h2 {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+}
+
+.calorie-total {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.calorie-total span {
+    font-size: 1.4rem;
+}
+
+.tracker-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tracker-form input {
+    margin-bottom: 0; /* Переопределяем старый отступ */
+}
+
+.dual-input {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .dual-input {
+        grid-template-columns: 1fr;
+    }
+}
+
+.btn-green {
+    background-color: #10B981;
+}
+
+.btn-green:hover {
+    background-color: #059669;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Списки еды и тренировок */
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-list li {
+    background-color: var(--bg-main);
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.item-list li:hover {
+    transform: translateX(5px);
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.item-notes {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.item-badge {
+    background-color: rgba(56, 189, 248, 0.1);
+    color: var(--accent-color);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.badge-green {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.btn-del {
+    background: transparent;
+    border: none;
+    color: #f70101;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0 10px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.btn-del:hover {
+    opacity: 1;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

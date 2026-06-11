@@ -1,26 +1,20 @@
 require('dotenv').config();
+console.log("DEBUG: Cloudinary Name loaded:", process.env.CLOUDINARY_CLOUD_NAME);
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
-const { PrismaClient } = require('@prisma/client'); // Подключаем Prisma
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
+const { PrismaClient } = require('@prisma/client');
 
-// Настраиваем Cloudinary ключами из .env
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
-const prisma = new PrismaClient(); // Инициализируем базу данных
+const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Твои токены
 const TELEGRAM_BOT_TOKEN = '8792149286:AAHCqXEDSdxh3BOd-njHJJohopZ2xTKj59I';
 const TELEGRAM_CHAT_ID = '688681425';
 const JWT_SECRET = 'my-super-secret-key-for-portfolio';
@@ -29,11 +23,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Настройка Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Сохранение только в память 
+// Настройка сохранения в оперативную память (для Cloudinary)
 const upload = multer({ storage: multer.memoryStorage() });
 
-// MIDDLEWARE ДЛЯ ПРОВЕРКИ JWT ТОКЕНА
+// Middleware для проверки токена
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -49,26 +49,21 @@ const authMiddleware = (req, res, next) => {
 };
 
 // =========================================
-// АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ (PRISMA)
+// 1. АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
 // =========================================
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-
-    // --- СТРОГАЯ ВАЛИДАЦИЯ ПАРОЛЯ НА СЕРВЕРЕ ---
+    
+    // Строгая проверка пароля
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Password must contain 8+ chars, 1 uppercase, 1 lowercase, and 1 number.' 
-        });
+        return res.status(400).json({ success: false, message: 'Password must contain 8+ chars, 1 uppercase, 1 lowercase, and 1 number.' });
     }
 
     try {
-        // Проверяем, есть ли уже такой юзер
         const existingUser = await prisma.user.findUnique({ where: { username } });
         if (existingUser) return res.status(400).json({ success: false, message: 'Username already exists' });
 
-        // Шифруем пароль и сохраняем в БД
         const hashedPassword = await bcrypt.hash(password, 10);
         await prisma.user.create({
             data: { username, password: hashedPassword }
@@ -80,16 +75,36 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// =========================================
-// ЛИЧНЫЙ КАБИНЕТ (PRISMA)
-// =========================================
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { username } });
+        if (!user) return res.status(400).json({ success: false, message: 'User not found' });
 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+            const token = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+            res.status(200).json({ success: true, token });
+        } else {
+            res.status(400).json({ success: false, message: 'Invalid password' });
+        }
+    } catch (error) { 
+        res.status(500).json({ success: false }); 
+    }
+});
+
+// =========================================
+// 2. ЛИЧНЫЙ КАБИНЕТ И ДАННЫЕ (SPA)
+// =========================================
+// =========================================
+// 2. ЛИЧНЫЙ КАБИНЕТ И ДАННЫЕ (SPA)
+// =========================================
 app.get('/api/user-data', authMiddleware, async (req, res) => {
     try {
-        // Достаем юзера вместе с его задачами (join таблиц)
+        // Теперь достаем пользователя вместе с его тренировками и едой
         const user = await prisma.user.findUnique({
             where: { username: req.user.username },
-            include: { tasks: true }
+            include: { workouts: true, meals: true }
         });
         
         if (!user) return res.status(404).json({ success: false });
@@ -103,12 +118,104 @@ app.get('/api/user-data', authMiddleware, async (req, res) => {
             skills: user.skills || "",
             telegram: user.telegram || "",
             github: user.github || "",
-            tasks: user.tasks || [] 
+            workouts: user.workouts || [],
+            meals: user.meals || []
         });
+    } catch (error) { 
+        res.status(500).json({ success: false }); 
+    }
+});
+
+// Обновление профиля (Cloudinary) - ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
+// Обновление профиля
+app.post('/api/profile', authMiddleware, (req, res, next) => {
+    upload.single('photo')(req, res, (err) => {
+        if (err) {
+            console.error("ОШИБКА MULTER:", err);
+            return res.status(400).json({ success: false, message: "File upload error: " + err.message });
+        }
+        next();
+    });
+}, async (req, res) => {
+    // УБРАЛИ 'skills' ИЗ ЭТОЙ СТРОКИ
+    const { bio, location, telegram, github } = req.body;
+    
+    try {
+        const updateData = {
+            bio: bio || "",
+            location: location || "",
+            // УБРАЛИ 'skills' ОТСЮДА
+            telegram: telegram || "",
+            github: github || ""
+        };
+
+        if (req.file) {
+            // ... остальной код (он правильный)
+            const uploadFromBuffer = (req) => {
+                return new Promise((resolve, reject) => {
+                    const cld_upload_stream = cloudinary.uploader.upload_stream(
+                        { folder: "portfolio_avatars" },
+                        (error, result) => {
+                            if (result) resolve(result);
+                            else reject(error);
+                        }
+                    );
+                    streamifier.createReadStream(req.file.buffer).pipe(cld_upload_stream);
+                });
+            };
+            const result = await uploadFromBuffer(req);
+            updateData.photo = result.secure_url;
+        }
+
+        await prisma.user.update({
+            where: { username: req.user.username },
+            data: updateData
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("ОШИБКА ВНУТРИ МАРШРУТА:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// --- НОВОЕ: ДОБАВЛЕНИЕ ТРЕНИРОВКИ ---
+app.post('/api/workouts', authMiddleware, async (req, res) => {
+    const { title, notes } = req.body;
+    if (!title) return res.status(400).json({ success: false });
+
+    try {
+        const newWorkout = await prisma.workout.create({
+            data: {
+                title,
+                notes: notes || "",
+                user: { connect: { username: req.user.username } }
+            }
+        });
+        res.json({ success: true, workout: newWorkout });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// --- НОВОЕ: ДОБАВЛЕНИЕ ЕДЫ / КАЛОРИЙ ---
+app.post('/api/meals', authMiddleware, async (req, res) => {
+    const { itemName, calories } = req.body;
+    if (!itemName) return res.status(400).json({ success: false });
+
+    try {
+        const newMeal = await prisma.meal.create({
+            data: {
+                itemName,
+                calories: parseInt(calories) || 0,
+                user: { connect: { username: req.user.username } }
+            }
+        });
+        res.json({ success: true, meal: newMeal });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// Обновление профиля (Cloudinary)
 app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res) => {
+    console.log("File received:", req.file); 
     const { bio, location, skills, telegram, github } = req.body;
     try {
         const updateData = {
@@ -119,30 +226,23 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
             github: github || ""
         };
 
-        // Если прилетел новый файл фото
         if (req.file) {
-            // Функция для загрузки буфера напрямую в Cloudinary
             const uploadFromBuffer = (req) => {
                 return new Promise((resolve, reject) => {
                     const cld_upload_stream = cloudinary.uploader.upload_stream(
-                        { folder: "portfolio_avatars" }, // Папка внутри твоего Cloudinary
+                        { folder: "portfolio_avatars" },
                         (error, result) => {
-                            if (result) { resolve(result); }
-                            else { reject(error); }
+                            if (result) resolve(result);
+                            else reject(error);
                         }
                     );
                     streamifier.createReadStream(req.file.buffer).pipe(cld_upload_stream);
                 });
             };
-
-            // Ждем завершения загрузки в облако
             const result = await uploadFromBuffer(req);
-            
-            // Сохраняем в базу данных красивую и вечную ссылку от Cloudinary
             updateData.photo = result.secure_url; 
         }
 
-        // Обновляем данные пользователя в БД
         await prisma.user.update({
             where: { username: req.user.username },
             data: updateData
@@ -152,27 +252,45 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
     } catch (error) { 
         console.error("Profile update error:", error);
         res.status(500).json({ success: false }); 
-    }
+    }  
 });
 
-app.post('/api/tasks', authMiddleware, async (req, res) => {
-    const { text } = req.body;
-    if (!text) return res.status(400).json({ success: false });
+// Добавление задач
+// --- ДОБАВЛЕНИЕ ТРЕНИРОВКИ ---
+app.post('/api/workouts', authMiddleware, async (req, res) => {
+    const { title, notes } = req.body;
+    if (!title) return res.status(400).json({ success: false });
 
     try {
-        // Создаем задачу и привязываем к юзеру
-        const newTask = await prisma.task.create({
+        const newWorkout = await prisma.workout.create({
             data: {
-                text,
+                title,
+                notes: notes || "",
                 user: { connect: { username: req.user.username } }
             }
         });
-        res.json({ success: true, task: newTask });
+        res.json({ success: true, workout: newWorkout });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
+// --- ДОБАВЛЕНИЕ ПРИЕМА ПИЩИ / КАЛОРИЙ ---
+app.post('/api/meals', authMiddleware, async (req, res) => {
+    const { itemName, calories } = req.body;
+    
+    try {
+        const newMeal = await prisma.meal.create({
+            data: {
+                itemName,
+                calories: parseInt(calories) || 0,
+                user: { connect: { username: req.user.username } }
+            }
+        });
+        res.json({ success: true, meal: newMeal });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
 // =========================================
-// МАРШРУТ TELEGRAM
+// 3. МАРШРУТ TELEGRAM И СТАТИКА
 // =========================================
 app.post('/send', async (req, res) => {
     const { name, email, message } = req.body;
@@ -185,14 +303,47 @@ app.post('/send', async (req, res) => {
         });
         if (response.ok) res.status(200).json({ success: true });
         else res.status(500).json({ success: false });
+    } catch (error) { 
+        res.status(500).json({ success: false }); 
+    }
+});
+//4. --- УДАЛЕНИЕ ТРЕНИРОВКИ ---
+app.delete('/api/workouts/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.workout.deleteMany({
+            where: { 
+                id: parseInt(id), 
+                user: { username: req.user.username } 
+            }
+        });
+        res.json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+// --- УДАЛЕНИЕ ПРИЕМА ПИЩИ ---
+app.delete('/api/meals/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.meal.deleteMany({
+            where: { 
+                id: parseInt(id), 
+                user: { username: req.user.username } 
+            }
+        });
+        res.json({ success: true });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
 // МАРШРУТ-ЛОВУШКА ДЛЯ SPA
 app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.use((err, req, res, next) => {
+    console.error("!!! ГЛОБАЛЬНАЯ ОШИБКА EXPRESS !!!");
+    console.error(err.stack); // Выведет полный путь ошибки
+    res.status(500).json({ success: false, message: "Server Error: " + err.message });
+});
 app.listen(PORT, () => {
     console.log(`Сервер бэкенда запущен на http://localhost:${PORT}`);
 });

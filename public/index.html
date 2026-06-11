@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maksym | IT-Specialist & Developer</title>
+    <title>FitTrack | Smart Workout & Nutrition</title>
     <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
         <nav class="nav">
-            <a href="/" id="logo-link" class="logo">Maksym.dev</a>
+            <a href="/" id="logo-link" class="logo">FitTrack.app</a>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#about" class="nav-home-link">About</a></li>
-                <li><a href="#skills" class="nav-home-link">Expertise</a></li
-                <li><a href="#portfolio" class="nav-home-link">Projects</a></li>
-                <li><a href="#contact" class="nav-home-link">Contact</a></li>
+                <li><a href="#features" class="nav-home-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-home-link">How it Works</a></li>
+                <li><a href="#contact" class="nav-home-link">Support</a></li>
                 <li><a href="#" id="open-auth" class="highlight">Login</a></li>
             </ul>
         </nav>
@@ -30,55 +27,41 @@
 
     <main id="landing-page">
         <section class="hero" id="about">
-            <h1>IT Engineering & <br> <span class="highlight">Software Development</span></h1>
-            <p>Design, development, and administration of IT infrastructure. A comprehensive approach to solving technical business challenges.</p>
-            <a href="#contact" class="btn">Discuss a Project</a>
+            <h1>Track Your Macros & <br> <span class="highlight">Conquer Your Split</span></h1>
+            <p>The ultimate all-in-one dashboard to manage your workout routines, track daily caloric intake, and log your supplement stack.</p>
+            <a href="#contact" class="btn">Get Early Access</a>
         </section>
 
-        <section id="skills" class="section">
-            <h2 class="section-title">Technical <span class="highlight">Expertise</span></h2>
+        <section id="features" class="section">
+            <h2 class="section-title">Smart <span class="highlight">Features</span></h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <h3>Infrastructure Administration</h3>
-                    <p>Deployment and maintenance of Linux (Ubuntu) servers. Design, configuration, and auditing of network architectures.</p>
+                    <h3>Workout Split Planner</h3>
+                    <p>Log your routines down to the set. Easily structure your weekly regimens and track progressive overload.</p>
                 </div>
                 <div class="skill-card">
-                    <h3>Software Development</h3>
-                    <p>Designing and writing fault-tolerant code (C, C++, C#, JavaScript). Development of cross-platform applications.</p>
+                    <h3>Calorie & Macro Logging</h3>
+                    <p>Keep a detailed diary of your meals. Sum up your daily caloric intake instantly without complex spreadsheets.</p>
                 </div>
                 <div class="skill-card">
-                    <h3>Hardware Engineering</h3>
-                    <p>Auditing, diagnostics, and modernization of hardware complexes. Stress-testing of computing systems.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="section">
-            <h2 class="section-title">Implemented <span class="highlight">Solutions</span></h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <h3>Corporate Web Resource / Portfolio</h3>
-                    <p>Architecture and full-stack development. Frontend: HTML5, CSS3, JS. Backend: Node.js with Telegram integration.</p>
-                </div>
-                <div class="project-card">
-                    <h3>Cross-Platform Application</h3>
-                    <p>Architecture design and UI/UX implementation for iOS and Android platforms.</p>
+                    <h3>Supplement Tracker</h3>
+                    <p>Never miss a dose. Track your daily intake of vitamins, minerals, and performance enhancers.</p>
                 </div>
             </div>
         </section>
 
         <section id="contact" class="section">
-            <h2 class="section-title">Have questions or <span class="highlight">a project?</span></h2>
+            <h2 class="section-title">Need Help or <span class="highlight">Found a Bug?</span></h2>
             <form id="contact-form" class="contact-form">
-                <input type="text" id="name" placeholder="Full Name / Company Name" required>
-                <input type="email" id="email" placeholder="Contact Email" required>
-                <textarea id="message" rows="5" placeholder="Brief description..." required></textarea>
-                <button type="submit" class="btn">Submit Request</button>
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Account Email" required>
+                <textarea id="message" rows="5" placeholder="Describe your issue or feature request..." required></textarea>
+                <button type="submit" class="btn">Send to Support</button>
             </form>
         </section>
     </main>
 
-   <section id="profile-page" class="section profile-page" style="display: none;">
+    <section id="profile-page" class="section profile-page" style="display: none;">
         <div class="profile-grid">
             
             <div class="profile-sidebar card">
@@ -89,9 +72,9 @@
                     </div>
                 </div>
                 
-                <h2 id="profile-username">Username</h2>
-                <p id="profile-location" class="profile-location">🌍 Berlin, Germany</p>
-                <p class="status-text">Available for work</p>
+                <h2 id="profile-username">Athlete</h2>
+                <p id="profile-location" class="profile-location">🌍 Earth</p>
+                <p class="status-text">Ready to train</p>
                 
                 <button id="open-edit-profile-btn" class="btn btn-sm btn-full">Edit Profile</button>
                 <button id="logout-btn" class="logout-btn mt-10">Logout</button>
@@ -99,33 +82,55 @@
                 <div class="profile-divider"></div>
 
                 <div class="profile-info-block">
-                    <h3>Skills</h3>
+                    <h3>Fitness Goals / Focus</h3>
                     <div id="profile-skills" class="skills-tags">
                         </div>
                 </div>
 
                 <div class="profile-info-block">
-                    <h3>Contacts</h3>
+                    <h3>Connect</h3>
                     <div id="profile-contacts" class="contact-links">
                         </div>
                 </div>
             </div>
 
             <div class="profile-main">
-                <div class="card mb-20">
-                    <h2>About Me</h2>
-                    <p id="profile-bio-text" class="bio-text">No description provided yet.</p>
+                
+                <div class="card mb-20 dashboard-block">
+                    <div class="dashboard-header">
+                        <h2>🏋️‍♂️ Workout Split Planner</h2>
+                    </div>
+                    <form id="add-workout-form" class="tracker-form">
+                        <input type="text" id="workout-title" placeholder="e.g., Arnold x PPL - Chest & Back" required>
+                        <input type="text" id="workout-notes" placeholder="Notes (e.g., 4x12 Incline Press)">
+                        <select id="workout-preset" onchange="fillWorkoutPreset()">
+                        <option value="">-- Choose from Preset --</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm">Log Workout</button>
+                    </form>
+                    <ul id="workout-list" class="item-list">
+                        </ul>
                 </div>
 
-                <div class="card">
-                    <h2>Project Workspace</h2>
-                    <p>Manage your tasks and infrastructure updates.</p>
-                    <form id="add-task-form" class="add-task-form">
-                        <input type="text" id="task-input" placeholder="New task..." required>
-                        <button type="submit" class="btn btn-sm">Add</button>
+                <div class="card dashboard-block">
+                    <div class="dashboard-header">
+                        <h2>🍽️ Daily Nutrition Log</h2>
+                        <div class="calorie-total">
+                            <span id="total-calories-display">0</span> kcal
+                        </div>
+                    </div>
+                    <form id="add-meal-form" class="tracker-form dual-input">
+                        <input type="text" id="meal-name" placeholder="e.g., Chicken Teriyaki or Ashwagandha" required>
+                        <input type="number" id="meal-calories" placeholder="Calories (e.g., 450)" min="0" required>
+                        <select id="meal-preset" onchange="fillMealPreset()">
+                        <option value="">-- Choose from Preset --</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-green">Add Item</button>
                     </form>
-                    <ul id="task-list" class="task-list"></ul>
+                    <ul id="meal-list" class="item-list">
+                        </ul>
                 </div>
+
             </div>
         </div>
     </section>
@@ -134,7 +139,7 @@
         <div class="modal-content profile-edit-content">
             <span class="close-btn" id="close-edit-modal">&times;</span>
             <h2>Edit Profile</h2>
-            <form id="edit-profile-form" class="auth-form active-form">
+           <form id="edit-profile-form" class="auth-form active-form" enctype="multipart/form-data">
                 <label>Profile Photo (Max 2MB)</label>
                 <input type="file" id="edit-photo" accept="image/png, image/jpeg, image/webp">
                 
@@ -145,17 +150,17 @@
                 <label>Location</label>
                 <input type="text" id="edit-location" placeholder="e.g. Berlin, Germany">
                 
-                <label>Skills (comma separated)</label>
-                <input type="text" id="edit-skills" placeholder="Linux, JavaScript, C++">
+                <label>Goals / Focus (comma separated)</label>
+                <input type="text" id="edit-skills" placeholder="Hypertrophy, Strength, Cardio">
                 
                 <label>Telegram Username</label>
                 <input type="text" id="edit-telegram" placeholder="@username">
                 
-                <label>GitHub Profile URL</label>
-                <input type="text" id="edit-github" placeholder="https://github.com/...">
+                <label>Social / Strava URL</label>
+                <input type="text" id="edit-github" placeholder="https://...">
                 
-                <label>About Me</label>
-                <textarea id="edit-bio" rows="4" placeholder="Tell about your experience..."></textarea>
+                <label>Bio</label>
+                <textarea id="edit-bio" rows="3" placeholder="Tell us about your fitness journey..."></textarea>
                 
                 <button type="submit" class="btn btn-full">Save Changes</button>
             </form>
@@ -183,6 +188,7 @@
     </div>
 
     <div id="toast" class="toast"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="script.js"></script>
 </body>

@@ -1,6 +1,22 @@
 // =========================================
 // 1. БАЗОВАЯ ЛОГИКА И УВЕДОМЛЕНИЯ
 // =========================================
+
+const PRESETS = {
+    meals: [
+        { name: "Овсянка", kcalPer100g: 370 },
+        { name: "Куриная грудка", kcalPer100g: 165 },
+        { name: "Рис (отварной)", kcalPer100g: 130 },
+        { name: "Творог 5%", kcalPer100g: 121 },
+        { name: "Яйца", kcalPer100g: 155 }
+    ],
+    workouts: [
+        { title: "Жим лежа", notes: "4x10, 60kg" },
+        { title: "Приседания", notes: "3x12, 80kg" },
+        { title: "Становая тяга", notes: "3x8, 100kg" },
+        { title: "Кардио", notes: "30 мин бег" }
+    ]
+};
 const form = document.getElementById('contact-form');
 const toast = document.getElementById('toast');
 
@@ -11,9 +27,8 @@ function showToast(message, type = 'success') {
     setTimeout(() => { toast.className = 'toast'; }, 3500);
 }
 
-// Отправка формы в Telegram
 form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  e.preventDefault();
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const message = document.getElementById('message').value;
@@ -29,16 +44,11 @@ form.addEventListener('submit', async (e) => {
         });
         const result = await response.json();
         if (result.success) {
-            showToast('Success! Your message has been sent.', 'success');
+            showToast('Message sent to support!', 'success');
             form.reset();
-        } else {
-            showToast('An error occurred.', 'error');
-        }
-    } catch (error) {
-        showToast('Server is unavailable.', 'error');
-    } finally {
-        btn.textContent = originalBtnText;
-    }
+        } else showToast('An error occurred.', 'error');
+    } catch (error) { showToast('Server is unavailable.', 'error'); } 
+    finally { btn.textContent = originalBtnText; }
 });
 
 // =========================================
@@ -57,37 +67,39 @@ const profilePage = document.getElementById('profile-page');
 const logoLink = document.getElementById('logo-link');
 const homeLinks = document.querySelectorAll('.nav-home-link');
 
+// Элементы профиля
 const profileUsername = document.getElementById('profile-username');
 const avatarLetter = document.getElementById('avatar-letter');
 const profilePhoto = document.getElementById('profile-photo');
 const profileAvatarFallback = document.getElementById('profile-avatar-fallback');
 const profileLocation = document.getElementById('profile-location');
-const profileBioText = document.getElementById('profile-bio-text');
+const profileBioText = document.getElementById('edit-bio');
 const profileSkills = document.getElementById('profile-skills');
 const profileContacts = document.getElementById('profile-contacts');
-
-const taskList = document.getElementById('task-list');
-const addTaskForm = document.getElementById('add-task-form');
 const logoutBtn = document.getElementById('logout-btn');
+
+// Новые элементы: Тренировки и Питание
+const workoutList = document.getElementById('workout-list');
+const addWorkoutForm = document.getElementById('add-workout-form');
+const mealList = document.getElementById('meal-list');
+const addMealForm = document.getElementById('add-meal-form');
+const totalCaloriesDisplay = document.getElementById('total-calories-display');
 
 let currentUsername = '';
 
-// Переключение на Главную
 function showLandingView(updateHistory = true) {
     profilePage.style.display = 'none';
     landingPage.style.display = 'block';
     if (updateHistory) window.history.pushState({ view: 'home' }, '', '/');
 }
 
-// Переключение на Профиль
 function showProfileView(updateHistory = true) {
-    if (!currentUsername) return; // Защита: пускаем только если есть имя пользователя
+    if (!currentUsername) return; 
     landingPage.style.display = 'none';
     profilePage.style.display = 'block';
     if (updateHistory) window.history.pushState({ view: 'profile' }, '', '/' + currentUsername);
 }
 
-// Навигация по меню
 logoLink.addEventListener('click', (e) => {
     e.preventDefault();
     showLandingView();
@@ -105,14 +117,10 @@ homeLinks.forEach(link => {
     });
 });
 
-// Клик по кнопке Login в шапке
 openAuthBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (currentUsername) {
-        showProfileView(); // Если уже ввели логин в этой сессии — пускаем
-    } else {
-        modal.classList.add('show'); // Иначе — требуем логин
-    }
+    if (currentUsername) showProfileView(); 
+    else modal.classList.add('show'); 
 });
 
 closeModalBtn.addEventListener('click', () => modal.classList.remove('show'));
@@ -135,11 +143,10 @@ registerForm.addEventListener('submit', async (e) => {
     const username = document.getElementById('reg-username').value;
     const password = document.getElementById('reg-password').value;
 
-    // --- ВАЛИДАЦИЯ ПАРОЛЯ ПЕРЕД ОТПРАВКОЙ НА СЕРВЕР ---
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
         showToast('Password must be 8+ chars, include uppercase, lowercase & number.', 'error');
-        return; // Останавливаем выполнение, сервер даже не потревожим
+        return; 
     }
 
     try {
@@ -149,18 +156,12 @@ registerForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ username, password })
         });
         const data = await response.json();
-        
         if (data.success) {
             showToast('Registration successful! Please login.', 'success');
             registerForm.reset();
             tabLogin.click();
-        } else { 
-            // Показываем ошибку с сервера (например, если логин занят)
-            showToast(data.message, 'error'); 
-        }
-    } catch (error) { 
-        showToast('Server error', 'error'); 
-    }
+        } else showToast(data.message, 'error'); 
+    } catch (error) { showToast('Server error', 'error'); }
 });
 
 loginForm.addEventListener('submit', async (e) => {
@@ -182,11 +183,11 @@ loginForm.addEventListener('submit', async (e) => {
             
             await loadUserData();
             showProfileView();
-        } else { showToast(data.message, 'error'); }
+        } else showToast(data.message, 'error'); 
     } catch (error) { showToast('Server error', 'error'); }
 });
 
-// Загрузка данных профиля
+// ЗАГРУЗКА И РЕНДЕР ДАННЫХ ДАШБОРДА
 async function loadUserData() {
     const token = localStorage.getItem('token');
     if (!token) return false;
@@ -201,7 +202,7 @@ async function loadUserData() {
         if (data.success) {
             currentUsername = data.username;
             profileUsername.textContent = data.username;
-            openAuthBtn.textContent = 'My Profile';
+            openAuthBtn.textContent = 'Dashboard';
 
             if (data.photo && data.photo.trim() !== '') {
                 profilePhoto.src = data.photo;
@@ -213,8 +214,7 @@ async function loadUserData() {
                 document.getElementById('avatar-letter').textContent = data.username.charAt(0).toUpperCase();
             }
 
-            profileLocation.textContent = data.location ? `🌍 ${data.location}` : '🌍 Not specified';
-            profileBioText.textContent = data.bio ? data.bio : 'No description provided yet.';
+            profileLocation.textContent = data.location ? `🌍 ${data.location}` : '🌍 Location not set';
             
             document.getElementById('edit-location').value = data.location || '';
             document.getElementById('edit-bio').value = data.bio || '';
@@ -230,53 +230,103 @@ async function loadUserData() {
                     span.textContent = skill;
                     profileSkills.appendChild(span);
                 });
-            } else {
-                profileSkills.innerHTML = '<span class="text-secondary">No skills added</span>';
-            }
+            } else profileSkills.innerHTML = '<span class="text-secondary">No goals added</span>';
 
             profileContacts.innerHTML = '';
             if (data.telegram) profileContacts.innerHTML += `<a href="https://t.me/${data.telegram.replace('@', '')}" target="_blank">✈️ Telegram</a>`;
-            if (data.github) profileContacts.innerHTML += `<a href="${data.github}" target="_blank">🐙 GitHub</a>`;
+            if (data.github) profileContacts.innerHTML += `<a href="${data.github}" target="_blank">🔗 Social Link</a>`;
             if (!data.telegram && !data.github) profileContacts.innerHTML = '<span class="text-secondary">No contacts added</span>';
 
-            taskList.innerHTML = '';
-            data.tasks.forEach(task => {
+            // Рендер Тренировок
+            workoutList.innerHTML = '';
+            data.workouts.forEach(w => {
                 const li = document.createElement('li');
-                li.textContent = task.text;
-                taskList.appendChild(li);
+                li.innerHTML = `
+                    <div class="item-info">
+                        <span class="item-title">${w.title}</span>
+                        ${w.notes ? `<span class="item-notes">${w.notes}</span>` : ''}
+                    </div>
+                    <button class="btn-del" onclick="deleteItem('workouts', ${w.id})">✕</button>
+                `;
+                workoutList.appendChild(li);
             });
+
+            // Рендер Питания и Подсчет Калорий
+            mealList.innerHTML = '';
+            let totalCals = 0;
+            data.meals.forEach(m => {
+                totalCals += m.calories;
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="item-info">
+                        <span class="item-title">${m.itemName}</span>
+                    </div>
+                    <span class="item-badge ${m.calories === 0 ? 'badge-green' : ''}">
+                        ${m.calories > 0 ? '+' + m.calories + ' kcal' : 'Supplement'}
+                    </span>
+                    <button class="btn-del" onclick="deleteItem('meals', ${m.id})">✕</button>
+                    </div>
+                `;
+                mealList.appendChild(li);
+            });
+            
+            // Анимация изменения счетчика
+            totalCaloriesDisplay.textContent = totalCals;
+
             return true;
         } else {
             clearAuthSession();
             return false;
         }
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
+    } catch (error) { return false; }
 }
 
-// Добавление задачи
-addTaskForm.addEventListener('submit', async (e) => {
+// ДОБАВЛЕНИЕ ТРЕНИРОВКИ
+addWorkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const text = document.getElementById('task-input').value;
+    const title = document.getElementById('workout-title').value;
+    const notes = document.getElementById('workout-notes').value;
     const token = localStorage.getItem('token');
+    
     try {
-        const response = await fetch('/api/tasks', {
+        const response = await fetch('/api/workouts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ text })
+            body: JSON.stringify({ title, notes })
         });
         const data = await response.json();
         if (data.success) {
-            document.getElementById('task-input').value = '';
+            document.getElementById('workout-title').value = '';
+            document.getElementById('workout-notes').value = '';
             await loadUserData();
-        } else { showToast('Failed to add task', 'error'); }
+        } else showToast('Failed to add workout', 'error'); 
+    } catch (error) { showToast('Server error', 'error'); }
+});
+
+// ДОБАВЛЕНИЕ ЕДЫ / ДОБАВОК
+addMealForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const itemName = document.getElementById('meal-name').value;
+    const calories = document.getElementById('meal-calories').value;
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch('/api/meals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ itemName, calories })
+        });
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('meal-name').value = '';
+            document.getElementById('meal-calories').value = '';
+            await loadUserData();
+        } else showToast('Failed to add log', 'error'); 
     } catch (error) { showToast('Server error', 'error'); }
 });
 
 // =========================================
-// 4. ВЫХОД (LOGOUT) И ЖЕСТКИЙ СБРОС СЕССИИ
+// 4. ВЫХОД И ЖЕСТКИЙ СБРОС СЕССИИ
 // =========================================
 logoutBtn.addEventListener('click', () => {
     clearAuthSession();
@@ -285,29 +335,22 @@ logoutBtn.addEventListener('click', () => {
 });
 
 function clearAuthSession() {
-    localStorage.removeItem('token'); // Удаляем токен из памяти
-    currentUsername = ''; // Стираем имя
-    openAuthBtn.textContent = 'Login'; // Возвращаем кнопку в исходное состояние
+    localStorage.removeItem('token'); 
+    currentUsername = ''; 
+    openAuthBtn.textContent = 'Login'; 
 }
 
-// ЖЕСТКИЙ СБРОС: При любом обновлении страницы (F5) мы стираем старые сессии
 window.addEventListener('DOMContentLoaded', () => {
-    clearAuthSession(); // Заставляем логиниться заново каждый раз!
-    
-    if (window.location.pathname !== '/') {
-        window.history.replaceState({}, '', '/');
-    }
+    clearAuthSession();
+    initPresets();
+    if (window.location.pathname !== '/') window.history.replaceState({}, '', '/');
     showLandingView(false);
 });
 
 window.addEventListener('popstate', (e) => {
-    if (window.location.pathname === '/') {
-        showLandingView(false);
-    } else if (currentUsername) {
-        showProfileView(false);
-    } else {
-        showLandingView(false);
-    }
+    if (window.location.pathname === '/') showLandingView(false);
+    else if (currentUsername) showProfileView(false);
+    else showLandingView(false);
 });
 
 // =========================================
@@ -317,7 +360,6 @@ const editProfileModal = document.getElementById('edit-profile-modal');
 const openEditProfileBtn = document.getElementById('open-edit-profile-btn');
 const closeEditModalBtn = document.getElementById('close-edit-modal');
 const editProfileForm = document.getElementById('edit-profile-form');
-
 const photoInput = document.getElementById('edit-photo');
 const cropContainer = document.getElementById('crop-container');
 const cropImage = document.getElementById('crop-image');
@@ -330,44 +372,30 @@ window.addEventListener('click', (e) => { if (e.target === editProfileModal) edi
 photoInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     if (file.size > 2 * 1024 * 1024) {
         showToast('File is too large! Maximum size is 2MB.', 'error');
-        photoInput.value = ''; 
-        cropContainer.style.display = 'none';
-        return;
+        photoInput.value = ''; cropContainer.style.display = 'none'; return;
     }
-
     const url = URL.createObjectURL(file);
     cropImage.src = url;
     cropContainer.style.display = 'block';
 
     if (cropper) cropper.destroy();
-
-    cropper = new Cropper(cropImage, {
-        aspectRatio: 1,
-        viewMode: 1,
-        dragMode: 'move',
-        background: false,
-    });
+    cropper = new Cropper(cropImage, { aspectRatio: 1, viewMode: 1, dragMode: 'move', background: false });
 });
 
 function getCroppedBlob(cropperInstance) {
     return new Promise((resolve) => {
-        cropperInstance.getCroppedCanvas({ width: 400, height: 400 }).toBlob((blob) => {
-            resolve(blob);
-        }, 'image/jpeg', 0.9);
+        cropperInstance.getCroppedCanvas({ width: 400, height: 400 }).toBlob((blob) => resolve(blob), 'image/jpeg', 0.9);
     });
 }
 
 editProfileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    
     const btn = editProfileForm.querySelector('button');
     const originalText = btn.textContent;
     btn.textContent = 'Saving...';
-
     const formData = new FormData();
     
     if (cropper) {
@@ -383,26 +411,64 @@ editProfileForm.addEventListener('submit', async (e) => {
     
     try {
         const response = await fetch('/api/profile', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
-            body: formData
+            method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
         });
         const data = await response.json();
-        
         if (data.success) {
-            showToast('Profile updated successfully!', 'success');
+            showToast('Profile updated!', 'success');
             if (cropper) { cropper.destroy(); cropper = null; }
-            cropContainer.style.display = 'none';
-            photoInput.value = '';
-            
+            cropContainer.style.display = 'none'; photoInput.value = '';
             editProfileModal.classList.remove('show');
             await loadUserData(); 
-        } else {
-            showToast('Failed to save profile', 'error');
-        }
-    } catch (error) { 
-        showToast('Server error', 'error'); 
-    } finally { 
-        btn.textContent = originalText; 
-    }
+        } else showToast('Failed to save profile', 'error');
+    } catch (error) { showToast('Server error', 'error'); } 
+    finally { btn.textContent = originalText; }
 });
+
+async function deleteItem(type, id) {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`/api/${type}/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+            await loadUserData(); // Перезагружаем список
+        } else showToast('Delete failed', 'error');
+    } catch (error) { showToast('Server error', 'error'); }
+}
+
+function fillMealPreset() {
+    const select = document.getElementById('meal-preset');
+    const index = select.value;
+    if (index === "") return;
+    
+    const meal = PRESETS.meals[index];
+    document.getElementById('meal-name').value = meal.name;
+    document.getElementById('meal-weight').value = 100; // Ставим 100г по умолчанию
+    calculateKcal(); // Автоматически пересчитываем калории
+}
+
+function fillWorkoutPreset() {
+    const select = document.getElementById('workout-preset');
+    const index = select.value;
+    if (index === "") return;
+
+    const workout = PRESETS.workouts[index];
+    document.getElementById('workout-title').value = workout.title; // ID твоего инпута
+    document.getElementById('workout-notes').value = workout.notes; // ID твоего инпута
+}
+
+function initPresets() {
+    const mealSelect = document.getElementById('meal-preset');
+    const workoutSelect = document.getElementById('workout-preset');
+
+    PRESETS.meals.forEach((m, index) => {
+        mealSelect.innerHTML += `<option value="${index}">${m.name} (${m.kcalPer100g} kcal/100g)</option>`;
+    });
+
+    PRESETS.workouts.forEach((w, index) => {
+        workoutSelect.innerHTML += `<option value="${index}">${w.title}</option>`;
+    });
+}

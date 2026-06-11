@@ -7,24 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Таблица пользователей
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
+  id       Int       @id @default(autoincrement())
+  username String    @unique
   password String
   bio      String?
   photo    String?
   location String?
-  skills   String?
   telegram String?
   github   String?
-  tasks    Task[]  // Связь: у одного пользователя много задач
+  // Новые связи
+  workouts Workout[]
+  meals    Meal[]
 }
 
-// Таблица задач
-model Task {
-  id     Int    @id @default(autoincrement())
-  text   String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
+// Таблица для тренировочных сплитов
+model Workout {
+  id        Int      @id @default(autoincrement())
+  title     String   // Например: "Arnold x PPL - Chest & Back"
+  notes     String?  // Описание или веса
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// Таблица для трекинга калорий и добавок
+model Meal {
+  id        Int      @id @default(autoincrement())
+  itemName  String   // Например: "Chicken Teriyaki" или "Magnesium / Ashwagandha"
+  calories  Int      // Количество калорий (0 для добавок)
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
