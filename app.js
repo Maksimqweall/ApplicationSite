@@ -2,7 +2,7 @@ require('dotenv').config();
 console.log("DEBUG: Cloudinary Name loaded:", process.env.CLOUDINARY_CLOUD_NAME);
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const multer = require('multer');
@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 // Твои токены
 const TELEGRAM_BOT_TOKEN = '8792149286:AAHCqXEDSdxh3BOd-njHJJohopZ2xTKj59I';
 const TELEGRAM_CHAT_ID = '688681425';
-const JWT_SECRET = 'my-super-secret-key-for-portfolio';
+const JWT_SECRET = '8f2a894ae6e9454a7e000d60f7995b9dc321349d7ee656ed015efb2403b9caebe1435d1b7337f1ffa9c3e32a8451e5f6255ec566ae2571d5b9291c949f0ee2dc';
 
 app.use(cors());
 app.use(express.json());
@@ -81,8 +81,8 @@ app.post('/api/contact', async (req, res) => {
 // =========================================
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-    
-    // Строгая проверка пароля
+    const username = req.body.username.trim(); 
+    const password = req.body.password.trim();
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
         return res.status(400).json({ success: false, message: 'Password must contain 8+ chars, 1 uppercase, 1 lowercase, and 1 number.' });
@@ -104,6 +104,8 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+    const username = req.body.username.trim(); 
+    const password = req.body.password.trim();
     const { username, password } = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { username } });
@@ -167,7 +169,7 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
         next();
     });
 }, async (req, res) => {
-    // ВАЖНО: Добавили calorieGoal, weight, height
+    // ВАЖНО: Убедись, что мы вытаскиваем bio и calorieGoal из запроса
     const { bio, location, telegram, github, calorieGoal, weight, height } = req.body;
     
     try {
@@ -176,12 +178,13 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
             location: location || "",
             telegram: telegram || "",
             github: github || "",
-            // Аккуратно конвертируем в числа. Если пусто - оставляем дефолт или null
+            // Жестко конвертируем калории в число
             calorieGoal: calorieGoal ? parseInt(calorieGoal) : 2500,
             weight: weight ? parseFloat(weight) : null,
             height: height ? parseFloat(height) : null
         };
 
+        // Логика загрузки фото в Cloudinary остается прежней
         if (req.file) {
             const uploadFromBuffer = (req) => {
                 return new Promise((resolve, reject) => {
@@ -199,6 +202,7 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
             updateData.photo = result.secure_url; 
         }
 
+        // Обновляем данные пользователя в базе Prisma
         await prisma.user.update({
             where: { username: req.user.username },
             data: updateData
@@ -210,7 +214,6 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
         res.status(500).json({ success: false }); 
     }  
 });
-
 // Тренировки
 app.post('/api/workouts', authMiddleware, async (req, res) => {
     const { title, notes, date } = req.body; // Принимаем date

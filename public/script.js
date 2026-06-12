@@ -232,6 +232,9 @@ const modal = document.getElementById('auth-modal');
 // =========================================
 // 4. ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
 // =========================================
+// =========================================
+// 4. ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
+// =========================================
 async function loadUserData() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -248,26 +251,51 @@ async function loadUserData() {
         if (data.success) {
             currentUsername = data.username;
             
-            // Заполнение профиля
+            // --- 1. БАЗОВЫЕ ДАННЫЕ ПРОФИЛЯ (ИМЯ, ЛОКАЦИЯ, РОСТ, ВЕС) ---
             const profileUsernameEl = document.getElementById('profile-username');
             const profileLocationEl = document.getElementById('profile-location');
             
-            if(profileUsernameEl) profileUsernameEl.textContent = data.username;
-            if(profileLocationEl) profileLocationEl.textContent = data.location ? `🌍 ${data.location}` : '🌍 Location not set';
-            
-            const statsText = [];
-            if (data.weight) statsText.push(`${data.weight} kg`);
-            if (data.height) statsText.push(`${data.height} cm`);
-            if (statsText.length > 0 && profileLocationEl) {
-                profileLocationEl.innerHTML += `<br><span style="color:var(--ios-cyan); font-size:0.85rem">${statsText.join(' • ')}</span>`;
+            if (profileUsernameEl) profileUsernameEl.textContent = data.username;
+            if (profileLocationEl) {
+                profileLocationEl.innerHTML = data.location ? `🌍 ${data.location}` : '🌍 Location not set';
+                
+                // Красиво выводим вес и рост под локацией
+                const statsText = [];
+                if (data.weight) statsText.push(`${data.weight} kg`);
+                if (data.height) statsText.push(`${data.height} cm`);
+                if (statsText.length > 0) {
+                    profileLocationEl.innerHTML += `<br><span style="color:var(--ios-cyan); font-size:0.85rem; display:inline-block; margin-top:8px; font-weight:600;">${statsText.join(' • ')}</span>`;
+                }
             }
 
-            // Аватар
+            // --- 2. ВЫВОД BIO-DATA В БЛОК "FOCUS OBJECTIVES" ---
+            const skillsEl = document.getElementById('profile-skills');
+            if (skillsEl) {
+                skillsEl.innerHTML = data.bio 
+                    ? `<p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">${data.bio}</p>` 
+                    : `<p style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">No bio-data defined.</p>`;
+            }
+
+            // --- 3. ВЫВОД TELEGRAM И GITHUB В БЛОК "INTEGRATIONS" ---
+            const contactsEl = document.getElementById('profile-contacts');
+            if (contactsEl) {
+                contactsEl.innerHTML = ''; // Очищаем старые данные
+                if (data.telegram) {
+                    const cleanTg = data.telegram.replace('@', ''); // Убираем @ если юзер ввел с ним
+                    contactsEl.innerHTML += `<a href="https://t.me/${cleanTg}" target="_blank" style="display:flex; align-items:center; gap:8px; margin-bottom:10px;"><span style="font-size:1.2rem">✈️</span> @${cleanTg}</a>`;
+                }
+                if (data.github) {
+                    contactsEl.innerHTML += `<a href="${data.github}" target="_blank" style="display:flex; align-items:center; gap:8px; margin-bottom:10px;"><span style="font-size:1.2rem">🔗</span> External Node</a>`;
+                }
+                if (!data.telegram && !data.github) {
+                    contactsEl.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">No integrations linked.</span>`;
+                }
+            }
+
+            // --- 4. РЕНДЕР АВАТАРА ---
             const profilePhoto = document.getElementById('profile-photo');
             const profileAvatarFallback = document.getElementById('profile-avatar-fallback');
-            const avatarLetter = document.getElementById('avatar-letter');
-            
-            if(profilePhoto && profileAvatarFallback){
+            if (profilePhoto && profileAvatarFallback) {
                 if (data.photo) {
                     profilePhoto.src = data.photo;
                     profilePhoto.style.display = 'block';
@@ -275,11 +303,13 @@ async function loadUserData() {
                 } else {
                     profilePhoto.style.display = 'none';
                     profileAvatarFallback.style.display = 'flex';
+                    const avatarLetter = document.getElementById('avatar-letter');
                     if(avatarLetter) avatarLetter.textContent = data.username.charAt(0).toUpperCase();
                 }
             }
 
-            // Заполнение модалки редактирования
+            // --- 5. ЗАПОЛНЕНИЕ ФОРМЫ РЕДАКТИРОВАНИЯ ---
+            // Сохраняем введенные данные в инпутах, чтобы они не пропадали при открытии окна
             const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; }
             setVal('edit-weight', data.weight || '');
             setVal('edit-height', data.height || '');
@@ -289,7 +319,7 @@ async function loadUserData() {
             setVal('edit-github', data.github || '');
             setVal('edit-bio', data.bio || '');
 
-            // Рендер тренировок
+            // --- 6. ТРЕНИРОВКИ ---
             const workoutList = document.getElementById('workout-list');
             if(workoutList){
                 workoutList.innerHTML = '';
@@ -306,7 +336,7 @@ async function loadUserData() {
                 });
             }
 
-            // Рендер питания и прогресс-бара
+            // --- 7. ПИТАНИЕ И РАСЧЕТ КАЛОРИЙ ---
             const mealList = document.getElementById('meal-list');
             let totalCals = 0;
             if(mealList){
@@ -329,8 +359,10 @@ async function loadUserData() {
                  (data.meals || []).forEach(m => totalCals += m.calories);
             }
 
-            // Обновление прогресс-бара с анимацией
-            const DAILY_GOAL = data.calorieGoal || 2500;
+            // --- 8. ПРОГРЕСС-БАР КАЛОРИЙ (ИСПРАВЛЕННОЕ ЖЕСТКОЕ ПРИСВОЕНИЕ) ---
+            // Жестко приводим цель к числу, чтобы избежать багов строки
+            const DAILY_GOAL = Number(data.calorieGoal) || 2500; 
+            
             const display = document.getElementById('total-calories-display');
             const displayGoal = document.getElementById('daily-goal-display');
             const progressBar = document.getElementById('calorie-progress');
@@ -339,7 +371,6 @@ async function loadUserData() {
             if (displayGoal) displayGoal.textContent = DAILY_GOAL;
 
             if (progressBar) {
-                // Маленькая задержка для красоты нативного прогресс бара
                 setTimeout(() => {
                     let percentage = (totalCals / DAILY_GOAL) * 100;
                     progressBar.style.width = (percentage > 100 ? 100 : percentage) + '%';
