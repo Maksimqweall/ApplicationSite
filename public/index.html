@@ -284,7 +284,11 @@
     </div>
 
     <div id="toast" class="toast"></div>
-
+<div id="ios-pwa-prompt" class="toast" style="display: none; bottom: 80px; flex-direction: column; gap: 8px; z-index: 2000; text-align: center;">
+        <span style="font-weight: 600;">Install FitTrack</span>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Tap <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> and then "Add to Home Screen"</span>
+        <button id="close-ios-prompt" style="position: absolute; top: 5px; right: 10px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">&times;</button>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="script.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>

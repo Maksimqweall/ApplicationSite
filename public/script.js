@@ -893,11 +893,44 @@ document.getElementById('open-auth')?.addEventListener('click', (e) => {
         if (tabLogin) tabLogin.click();
     }
 });
-// Инициализация при загрузке страницы
+
+
+// =========================================
+// PWA INSTALL PROMPT (iOS & ANDROID)
+// =========================================
+function initPwaPrompt() {
+    // Проверяем, это устройство Apple?
+    const isIos = () => {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(userAgent);
+    };
+    
+    // Проверяем, установлено ли уже приложение на рабочий стол?
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    // Если это iOS, браузер (не приложение) и мы еще не показывали подсказку
+    if (isIos() && !isInStandaloneMode() && !localStorage.getItem('ios_prompt_dismissed')) {
+        const iosPrompt = document.getElementById('ios-pwa-prompt');
+        if (iosPrompt) {
+            setTimeout(() => {
+                iosPrompt.style.display = 'flex';
+                // Используем тайм-аут для плавного появления (анимация из класса .toast)
+                setTimeout(() => iosPrompt.classList.add('show'), 100);
+            }, 3000); // Показываем через 3 секунды после входа на сайт
+
+            document.getElementById('close-ios-prompt')?.addEventListener('click', () => {
+                iosPrompt.classList.remove('show');
+                setTimeout(() => iosPrompt.style.display = 'none', 500);
+                localStorage.setItem('ios_prompt_dismissed', 'true'); // Больше не бесим юзера
+            });
+        }
+    }
+}
 // Инициализация при загрузке страницы
 window.addEventListener('DOMContentLoaded', async () => {
     initPresets();
-    
+    initPwaPrompt();
+
     // 1. ЖЕЛЕЗОБЕТОННО УБИВАЕМ ПРОЗРАЧНОСТЬ И АНИМАЦИИ СТАРТА
     document.querySelectorAll('.reveal-up, .reveal-scale').forEach(el => {
         el.style.opacity = '1';
