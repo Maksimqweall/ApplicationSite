@@ -14,10 +14,10 @@ const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Твои токены
-const TELEGRAM_BOT_TOKEN = '8792149286:AAHCqXEDSdxh3BOd-njHJJohopZ2xTKj59I';
-const TELEGRAM_CHAT_ID = '688681425';
-const JWT_SECRET = '8f2a894ae6e9454a7e000d60f7995b9dc321349d7ee656ed015efb2403b9caebe1435d1b7337f1ffa9c3e32a8451e5f6255ec566ae2571d5b9291c949f0ee2dc';
+//токены и ключи для Telegram и JWT
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
 app.use(express.json());
