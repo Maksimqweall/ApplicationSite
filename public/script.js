@@ -3,65 +3,155 @@
 // =========================================
 const PRESETS = {
     meals: [
-        { name: "Chicken Breast", kcalPer100g: 165 },
-        { name: "Salmon", kcalPer100g: 208 },
-        { name: "Lean Beef", kcalPer100g: 250 },
-        { name: "Egg", kcalPer100g: 155 },
-        { name: "Cottage Cheese 5%", kcalPer100g: 98 },
-        { name: "Whey Protein", kcalPer100g: 370 },
-        { name: "Oatmeal (dry)", kcalPer100g: 370 },
+        // --- 🥩 PROTEIN (Мясо, Птица, Рыба, Яйца) ---
+        { name: "Chicken Breast (raw)", kcalPer100g: 110 },
+        { name: "Chicken Breast (cooked)", kcalPer100g: 165 },
+        { name: "Chicken Thigh (boneless)", kcalPer100g: 209 },
+        { name: "Chicken Teriyaki", kcalPer100g: 175 },
+        { name: "Turkey Breast", kcalPer100g: 135 },
+        { name: "Lean Beef (5% fat)", kcalPer100g: 137 },
+        { name: "Beef Steak (Ribeye)", kcalPer100g: 291 },
+        { name: "Pork Loin", kcalPer100g: 242 },
+        { name: "Salmon (raw)", kcalPer100g: 208 },
+        { name: "Tuna (canned in water)", kcalPer100g: 86 },
+        { name: "Shrimp (cooked)", kcalPer100g: 99 },
+        { name: "White Fish (Cod/Tilapia)", kcalPer100g: 85 },
+        { name: "Whole Egg", kcalPer100g: 155 },
+        { name: "Egg White", kcalPer100g: 52 },
+        { name: "Tofu (firm)", kcalPer100g: 144 },
+
+        // --- 🍚 CARBS (Крупы, Макароны, Хлеб) ---
+        { name: "White Rice (dry)", kcalPer100g: 360 },
         { name: "White Rice (cooked)", kcalPer100g: 130 },
-        { name: "Brown Rice (cooked)", kcalPer100g: 111 },
-        { name: "Sweet Potato", kcalPer100g: 86 },
-        { name: "Banana", kcalPer100g: 89 },
+        { name: "Brown Rice (cooked)", kcalPer100g: 112 },
+        { name: "Oatmeal (dry)", kcalPer100g: 379 },
+        { name: "Buckwheat (cooked)", kcalPer100g: 92 },
+        { name: "Pasta/Macaroni (dry)", kcalPer100g: 350 },
+        { name: "Pasta (cooked)", kcalPer100g: 131 },
+        { name: "Samyang Buldak Spicy Noodles", kcalPer100g: 400 },
+        { name: "Potato (boiled)", kcalPer100g: 87 },
+        { name: "Sweet Potato (baked)", kcalPer100g: 90 },
+        { name: "White Bread", kcalPer100g: 265 },
+        { name: "Whole Wheat Bread", kcalPer100g: 247 },
+        { name: "Rice Cakes", kcalPer100g: 387 },
+
+        // --- 🥛 DAIRY & FATS (Молочка, Сыры, Орехи, Масла) ---
+        { name: "Milk 3.2%", kcalPer100g: 61 },
+        { name: "Milk 1.5%", kcalPer100g: 44 },
+        { name: "Cottage Cheese 5%", kcalPer100g: 98 },
+        { name: "Cottage Cheese 0%", kcalPer100g: 72 },
+        { name: "Greek Yogurt 2%", kcalPer100g: 73 },
+        { name: "Cheddar Cheese", kcalPer100g: 402 },
+        { name: "Mozzarella", kcalPer100g: 280 },
         { name: "Almonds", kcalPer100g: 579 },
+        { name: "Walnuts", kcalPer100g: 654 },
         { name: "Peanut Butter", kcalPer100g: 588 },
-        { name: "Greek Yogurt", kcalPer100g: 60 }
+        { name: "Olive Oil", kcalPer100g: 884 },
+        { name: "Butter", kcalPer100g: 717 },
+        { name: "Avocado", kcalPer100g: 160 },
+
+        // --- 🍏 FRUITS & VEGGIES (Овощи и Фрукты) ---
+        { name: "Banana", kcalPer100g: 89 },
+        { name: "Apple", kcalPer100g: 52 },
+        { name: "Orange", kcalPer100g: 47 },
+        { name: "Strawberries", kcalPer100g: 32 },
+        { name: "Blueberries", kcalPer100g: 57 },
+        { name: "Broccoli", kcalPer100g: 34 },
+        { name: "Spinach", kcalPer100g: 23 },
+        { name: "Tomato", kcalPer100g: 18 },
+        { name: "Cucumber", kcalPer100g: 15 },
+        { name: "Bell Pepper", kcalPer100g: 20 },
+
+        // --- 🍔 SNACKS & CHEAT MEALS ---
+        { name: "Dark Chocolate 70%", kcalPer100g: 598 },
+        { name: "Milk Chocolate", kcalPer100g: 535 },
+        { name: "Potato Chips", kcalPer100g: 536 },
+        { name: "Pizza (Average Margherita)", kcalPer100g: 266 },
+        { name: "Burger (Fast Food)", kcalPer100g: 295 },
+        { name: "Ice Cream", kcalPer100g: 207 },
+
+        // --- 💊 SUPPLEMENTS (Добавки) ---
+        { name: "Whey Protein Isolate", kcalPer100g: 360 },
+        { name: "Whey Protein Concentrate", kcalPer100g: 400 },
+        { name: "Mass Gainer", kcalPer100g: 380 },
+        { name: "Creatine Monohydrate", kcalPer100g: 0 },
+        { name: "Pre-Workout", kcalPer100g: 0 },
+        { name: "BCAA / EAA", kcalPer100g: 0 },
+        { name: "Ashwagandha", kcalPer100g: 0 },
+        { name: "Magnesium", kcalPer100g: 0 },
+        { name: "Omega-3 (Fish Oil)", kcalPer100g: 900 }
     ],
-    workouts: [
-        { title: "Bench Press", notes: "4 sets x 8-10 reps" },
-        { title: "Overhead Press", notes: "3 sets x 10 reps" },
-        { title: "Tricep Pushdowns", notes: "3 sets x 12-15 reps" },
-        { title: "Pull-ups", notes: "3 sets to failure" },
-        { title: "Barbell Rows", notes: "4 sets x 8 reps" },
-        { title: "Bicep Curls", notes: "3 sets x 12 reps" },
-        { title: "Barbell Squat", notes: "4 sets x 8 reps" },
-        { title: "Deadlift", notes: "3 sets x 5 reps" },
-        { title: "Leg Press", notes: "3 sets x 12 reps" },
-        { title: "Running", notes: "30 min steady pace" },
-        { title: "Cycling", notes: "45 min moderate intensity" }
-    ]
-};
-
-// Функция для получения даты в формате YYYY-MM-DD с учетом локальной временной зоны
-function getLocalISOString(date) {
-    const offset = date.getTimezoneOffset() * 60000;
-    return (new Date(date - offset)).toISOString().split('T')[0];
-}
-
-window.currentAppDate = getLocalISOString(new Date());
-
-// Функция для смены текущей даты (вперед или назад на offset дней)
-window.changeDay = async function(offset) {
-    const dateObj = new Date(window.currentAppDate);
-    dateObj.setDate(dateObj.getDate() + offset);
-    window.currentAppDate = getLocalISOString(dateObj);
-    updateDateDisplay();
     
-    // Эффект обновления данных (затемнение и небольшое уменьшение масштаба)
-    const mainArea = document.querySelector('.profile-main');
-    if(mainArea){
-        mainArea.style.opacity = '0.5';
-        mainArea.style.transform = 'scale(0.98)';
-        
-        await loadUserData();
-        
-        setTimeout(() => {
-            mainArea.style.opacity = '1';
-            mainArea.style.transform = 'scale(1)';
-            mainArea.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-        }, 150);
-    }
+    workouts: [
+        // --- CHEST (Грудь) ---
+        { title: "Barbell Bench Press", notes: "4 sets x 8-10 reps" },
+        { title: "Incline Barbell Press", notes: "3 sets x 8-12 reps" },
+        { title: "Dumbbell Bench Press", notes: "3 sets x 8-12 reps" },
+        { title: "Incline Dumbbell Press", notes: "3 sets x 10-12 reps" },
+        { title: "Decline Bench Press", notes: "3 sets x 8-10 reps" },
+        { title: "Chest Flyes (Machine/Cable)", notes: "3 sets x 12-15 reps" },
+        { title: "Cable Crossovers", notes: "4 sets x 12-15 reps" },
+        { title: "Push-ups", notes: "3 sets to failure" },
+        { title: "Dips (Chest Focus)", notes: "3 sets x 8-12 reps" },
+
+        // --- BACK (Спина) ---
+        { title: "Pull-ups", notes: "3 sets to failure" },
+        { title: "Chin-ups", notes: "3 sets to failure" },
+        { title: "Lat Pulldown (Wide Grip)", notes: "4 sets x 10-12 reps" },
+        { title: "Lat Pulldown (Close Grip)", notes: "3 sets x 10-12 reps" },
+        { title: "Barbell Row", notes: "4 sets x 8-10 reps" },
+        { title: "Dumbbell Row (One Arm)", notes: "3 sets x 10-12 reps" },
+        { title: "Seated Cable Row", notes: "3 sets x 10-12 reps" },
+        { title: "T-Bar Row", notes: "3 sets x 8-12 reps" },
+        { title: "Deadlift", notes: "1 warm-up, 3 working sets x 5 reps" },
+        { title: "Rack Pulls", notes: "3 sets x 6-8 reps" },
+
+        // --- SHOULDERS (Плечи) ---
+        { title: "Overhead Press (OHP)", notes: "4 sets x 6-8 reps" },
+        { title: "Arnold Press", notes: "3 sets x 10-12 reps" },
+        { title: "Seated Dumbbell Press", notes: "3 sets x 8-12 reps" },
+        { title: "Lateral Raises (Dumbbell)", notes: "4 sets x 15 reps" },
+        { title: "Lateral Raises (Cable)", notes: "3 sets x 15 reps" },
+        { title: "Front Raises", notes: "3 sets x 12 reps" },
+        { title: "Face Pulls", notes: "4 sets x 15-20 reps" },
+        { title: "Reverse Pec Deck (Rear Delts)", notes: "3 sets x 15 reps" },
+        { title: "Shrugs (Barbell/Dumbbell)", notes: "3 sets x 12-15 reps" },
+
+        // --- ARMS (Руки) ---
+        { title: "Barbell Bicep Curl", notes: "3 sets x 10-12 reps" },
+        { title: "Dumbbell Alternate Curl", notes: "3 sets x 10-12 reps" },
+        { title: "Hammer Curls", notes: "3 sets x 12 reps" },
+        { title: "Preacher Curls", notes: "3 sets x 10-12 reps" },
+        { title: "Tricep Pushdown (Rope)", notes: "4 sets x 12-15 reps" },
+        { title: "Tricep Pushdown (Straight Bar)", notes: "3 sets x 10-12 reps" },
+        { title: "Skullcrushers (EZ-Bar)", notes: "3 sets x 10-12 reps" },
+        { title: "Overhead Tricep Extension", notes: "3 sets x 12 reps" },
+        { title: "Close-grip Bench Press", notes: "3 sets x 8-10 reps" },
+
+        // --- LEGS (Ноги) ---
+        { title: "Barbell Squat", notes: "4 sets x 6-8 reps" },
+        { title: "Front Squat", notes: "3 sets x 8-10 reps" },
+        { title: "Leg Press", notes: "4 sets x 10-12 reps" },
+        { title: "Romanian Deadlift (RDL)", notes: "3 sets x 8-12 reps" },
+        { title: "Walking Lunges", notes: "3 sets x 12 steps per leg" },
+        { title: "Bulgarian Split Squats", notes: "3 sets x 10 reps per leg" },
+        { title: "Leg Extensions", notes: "3 sets x 15 reps" },
+        { title: "Lying Leg Curls", notes: "3 sets x 12-15 reps" },
+        { title: "Seated Leg Curls", notes: "3 sets x 12-15 reps" },
+        { title: "Standing Calf Raises", notes: "4 sets x 15-20 reps" },
+        { title: "Seated Calf Raises", notes: "3 sets x 15-20 reps" },
+
+        // --- CORE & CARDIO (Пресс и Кардио) ---
+        { title: "Crunches", notes: "3 sets x 20 reps" },
+        { title: "Hanging Leg Raises", notes: "3 sets x 12-15 reps" },
+        { title: "Plank", notes: "3 sets x 60 seconds" },
+        { title: "Russian Twists", notes: "3 sets x 20 reps" },
+        { title: "Ab Wheel Rollout", notes: "3 sets x 10-12 reps" },
+        { title: "Treadmill Running", notes: "30 min, moderate pace" },
+        { title: "Stairmaster", notes: "20 min, high intensity" },
+        { title: "Cycling (Stationary)", notes: "45 min, steady state" },
+        { title: "Jump Rope", notes: "15 min interval" }
+    ]
 };
 
 // Обновление отображения текущей даты на UI
