@@ -380,3 +380,69 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Сервер бэкенда запущен на http://localhost:${PORT}`);
 });
+
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// --- АВТОРИЗАЦИЯ ЧЕРЕЗ GOOGLE ---
+app.post('/api/auth/google', async (req, res) => {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+        return res.status(400).json({ success: false, message: "Token missing" });
+    }
+
+    try {
+        // Верифицируем токен в Google API
+        const ticket = await googleClient.verifyIdToken({
+            idToken: idToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        
+        const payload = ticket.getPayload();
+        const googleId = payload['sub']; // Уникальный ID пользователя в Google
+        const email = payload['email'];
+        const name = payload['name'] || email.split('@')[0]; // Если нет имени, берем часть email
+
+        // Ищем пользователя по googleId или по email
+        let user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { googleId: googleId },
+                    { username: name }
+                ]
+            }
+        });
+
+        // Если пользователя нет — создаем новую "ноду"
+        if (!user) {
+            user = await prisma.user.create({
+                data: {
+                    username: name,
+                    googleId: googleId,
+                    email: email,
+                    calorieGoal: 2500 // Дефолтные параметры
+                }
+            });
+        } else if (!user.googleId) {
+            // Если пользователь регистрировался по паролю, но зашел через Google с тем же именем
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: { googleId: googleId, email: email }
+            });
+        }
+
+        // Создаем стандартный JWT токен твоего приложения (как при обычном логине)
+        const token = jwt.sign(
+            { username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({ success: true, token });
+
+    } catch (error) {
+        console.error("Google Auth Error:", error);
+        res.status(400).json({ success: false, message: "Invalid Google Token" });
+    }
+});

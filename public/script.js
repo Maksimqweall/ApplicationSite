@@ -808,4 +808,50 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (landingCtaBtn && localStorage.getItem('token')) {
         landingCtaBtn.style.display = 'none';
     }
+    // Функция обработки ответа от Google
+window.handleCredentialResponse = async function(response) {
+    try {
+        // Отправляем полученный токен на наш бэкенд
+        const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: response.credential })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+            localStorage.setItem('token', data.token); // Сохраняем JWT
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.classList.remove('show'); // Закрываем модалку
+            
+            showToast('Authenticated via Google Node', 'success');
+            
+            // Глобальная функция загрузки данных юзера и переключения на дашборд
+            await loadUserData();
+            showProfileView();
+        } else {
+            showToast(data.message || 'Google Auth Failed', 'error');
+        }
+    } catch (error) {
+        showToast('Server Link Failed', 'error');
+    }
+};
+
+// Инициализация кнопки Google (вызывать при загрузке страницы)
+function initGoogleAuth() {
+    if (typeof google !== 'undefined') {
+        google.accounts.id.initialize({
+            client_id: "ТВОЙ_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Замени на свой ID
+            callback: window.handleCredentialResponse
+        });
+        
+        // Рендерим кнопку в красивом стеклянном/темном стиле под дизайн iOS
+        google.accounts.id.renderButton(
+            document.getElementById("googleButton"),
+            { theme: "outline", size: "large", type: "standard", shape: "pill", text: "signin_with" }
+        );
+    }
+}
+initGoogleAuth()
 });
