@@ -1096,3 +1096,10 @@ input:focus, textarea:focus, .tracker-form select:focus {
     .stat-circle { width: 120px; height: 120px; }
     .stat-value { font-size: 1.5rem; }
 }
+
+/* ОТКЛЮЧЕНИЕ ПРОПАДАНИЯ ЭЛЕМЕНТОВ ПРИ ЗАГРУЗКЕ */
+.reveal-up, .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}

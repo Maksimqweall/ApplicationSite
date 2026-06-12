@@ -128,56 +128,60 @@ const profilePage = document.getElementById('profile-page');
 const authBtn = document.getElementById('open-auth');
 
 // Отображение главной страницы (лендинга)
-function showLandingView(instant = false) {
-    if (instant) {
-        if(profilePage) profilePage.style.display = 'none';
-        if(landingPage){
-            landingPage.style.display = 'block';
-            landingPage.classList.remove('view-hidden');
+window.showLandingView = function(instant = false) {
+    if (instant || !profilePage || profilePage.style.display === 'none') {
+        if (profilePage) {
+            profilePage.style.display = 'none';
+            profilePage.classList.add('view-hidden');
+        }
+        if (landingPage) {
+            landingPage.style.display = 'block'; // Принудительно показываем
+            setTimeout(() => landingPage.classList.remove('view-hidden'), 10);
         }
     } else {
-        if (profilePage && profilePage.style.display !== 'none') {
-            switchView(profilePage, landingPage);
-        }
+        switchView(profilePage, landingPage);
     }
     
-    if (authBtn) {
-        authBtn.textContent = localStorage.getItem('token') ? 'Dashboard' : 'Sign In';
-    }
+    const hasToken = localStorage.getItem('token');
+    if (authBtn) authBtn.textContent = hasToken ? 'Dashboard' : 'Sign In';
     
-    // Скрываем кнопку "Start Your Journey", если пользователь уже авторизован
-  const landingCtaBtn = document.getElementById('landing-cta-btn');
-if (landingCtaBtn) {
-    landingCtaBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (modal) modal.classList.add('show');    
-        const tabRegister = document.getElementById('tab-register');
-        if (tabRegister) tabRegister.click();
-    });
-}
-}
+    const landingCtaBtn = document.getElementById('landing-cta-btn');
+    if (landingCtaBtn) landingCtaBtn.style.display = hasToken ? 'none' : 'inline-block';
+};
+
 // Отображение профиля (дашборда)
-function showProfileView() {
-    if (!currentUsername) return;
+window.showProfileView = function(instant = false) {
+    // Убрали багованную проверку if (!currentUsername)
     
-    if (landingPage && landingPage.style.display !== 'none') {
-        switchView(landingPage, profilePage, () => {
-            updateDateDisplay();
-        });
-    } else {
+    if (instant || !landingPage || landingPage.style.display === 'none') {
+        if (landingPage) {
+            landingPage.style.display = 'none';
+            landingPage.classList.add('view-hidden');
+        }
+        if (profilePage) {
+            profilePage.style.display = 'block'; // Принудительно показываем
+            setTimeout(() => profilePage.classList.remove('view-hidden'), 10);
+        }
         updateDateDisplay();
+    } else {
+        switchView(landingPage, profilePage, () => updateDateDisplay());
     }
     
     if (authBtn) authBtn.textContent = 'Dashboard';
-}
+};
 
 // Навигация из шапки: логин или переход в профиль
-document.getElementById('open-auth')?.addEventListener('click', (e) => { 
-    e.preventDefault(); 
-    if (localStorage.getItem('token')) {
-        if (profilePage && profilePage.style.display === 'none') showProfileView(); 
-    } else {
-        if(modal) modal.classList.add('show'); 
+// Обработка кнопки "Start Your Journey" на главной
+document.getElementById('landing-cta-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const modal = document.getElementById('auth-modal');
+    const tabRegister = document.getElementById('tab-register');
+    
+    if (modal) {
+        modal.classList.add('show'); // Открываем модалку
+    }
+    if (tabRegister) {
+        tabRegister.click(); // Автоматически переключаем на вкладку "Initialize" (Регистрация)
     }
 });
 
@@ -785,28 +789,49 @@ if(registerForm){
 }
 
 // Инициализация при загрузке страницы
+// Инициализация при загрузке страницы
 window.addEventListener('DOMContentLoaded', async () => {
     initPresets();
-    setupScrollAnimations(); // Запускаем слушатель скролла
     
-    // Изначально прячем обе страницы до выяснения статуса
-    if(landingPage) landingPage.style.display = 'none';
-    if(profilePage) profilePage.style.display = 'none';
+    // 1. ЖЕЛЕЗОБЕТОННО УБИВАЕМ ПРОЗРАЧНОСТЬ И АНИМАЦИИ СТАРТА
+    document.querySelectorAll('.reveal-up, .reveal-scale').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.transition = 'none';
+        el.classList.add('active'); // Принудительно зажигаем
+    });
     
     const token = localStorage.getItem('token');
+    
+    // 2. МГНОВЕННО РИСУЕМ ИНТЕРФЕЙС (не ждем сервер!)
     if (token) {
-        const success = await loadUserData();
-        if (success) {
-            showProfileView(true); // Показывать дашборд мгновенно
-        } else {
+        showProfileView(true); // Сразу показываем дашборд
+        
+        // Делаем основную зону полупрозрачной, показывая, что идет загрузка с Render
+        const mainArea = document.querySelector('.profile-main');
+        if (mainArea) {
+            mainArea.style.opacity = '0.4';
+            mainArea.style.pointerEvents = 'none'; // Блокируем клики, пока грузятся данные
+        }
+        
+        try {
+            const success = await loadUserData(); // Спокойно ждем данные в фоне
+            if (!success) {
+                localStorage.removeItem('token');
+                showLandingView(true);
+            }
+        } catch(e) {
+            localStorage.removeItem('token');
             showLandingView(true);
+        } finally {
+            // Как только сервер ответил — возвращаем яркость
+            if (mainArea) {
+                mainArea.style.opacity = '1';
+                mainArea.style.pointerEvents = 'auto';
+            }
         }
     } else {
-        showLandingView(true);
-    }
-    const landingCtaBtn = document.getElementById('landing-cta-btn');
-    if (landingCtaBtn && localStorage.getItem('token')) {
-        landingCtaBtn.style.display = 'none';
+        showLandingView(true); // Если токена нет — сразу рисуем лендинг
     }
     // Функция обработки ответа от Google
 window.handleCredentialResponse = async function(response) {

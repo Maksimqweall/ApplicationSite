@@ -1,0 +1,16 @@
+[33m615cfcb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Added more workouts and meals presets.
+[33m8df15b5[m Added Google authentification. Fixed bugs with Profile. Added optimization for Smartphones/Tablets
+[33m2d6cf30[m Test google authentification
+[33m2620cfd[m secured tokens
+[33m93bfbaa[m Fixed a bug. Test
+[33m37d450b[m Fixed a bug with a login after Deployment on Render. Test
+[33mc023dab[m Modified Design of a site, added Liquid Glass effect(Still needs to upgrade). Need to fix a bugs. Call it a stable beta version
+[33mbf51bbb[m Modified style of the site(will be changed later anyway).Modified Meal adding and meal calculator.
+[33m6416b83[m Completely changed the task of site. Added workout and meal planner/counter. Fixed bugs with uploading photos.Major changes of site.
+[33mefca045[m Added a Cloud storage for Photos. Minor changes of site
+[33mf5acba2[m Added a save DB. Minor changes of site
+[33m54af275[m Fixed bug with a cropper
+[33m5a4b776[m Modified profile page and added more functions to the website
+[33m80f5d66[m Added custom toast notification instead of alert
+[33md1b7b92[m Translated to English and added scroll-to-top logo
+[33m53eecbf[m Readyforusesite
