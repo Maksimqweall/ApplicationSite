@@ -8,35 +8,37 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  username String    @unique
-  password String
-  bio      String?
-  photo    String?
-  location String?
-  telegram String?
-  github   String?
-  // Новые связи
-  workouts Workout[]
-  meals    Meal[]
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  password    String
+  bio         String?
+  location    String?
+  telegram    String?
+  github      String?
+  photo       String?
+  // --- НОВЫЕ ПОЛЯ ---
+  calorieGoal Int       @default(2500)
+  weight      Float?
+  height      Float?
+  // ------------------
+  workouts    Workout[]
+  meals       Meal[]
 }
 
-// Таблица для тренировочных сплитов
 model Workout {
   id        Int      @id @default(autoincrement())
-  title     String   // Например: "Arnold x PPL - Chest & Back"
-  notes     String?  // Описание или веса
-  createdAt DateTime @default(now())
+  title     String
+  notes     String?
+  date      String   @default("") // Формат: YYYY-MM-DD
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 }
 
-// Таблица для трекинга калорий и добавок
 model Meal {
   id        Int      @id @default(autoincrement())
-  itemName  String   // Например: "Chicken Teriyaki" или "Magnesium / Ashwagandha"
-  calories  Int      // Количество калорий (0 для добавок)
-  createdAt DateTime @default(now())
+  itemName  String
+  calories  Int
+  date      String   @default("") // Формат: YYYY-MM-DD
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 }

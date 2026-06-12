@@ -47,6 +47,34 @@ const authMiddleware = (req, res, next) => {
         res.status(401).json({ success: false, message: 'Invalid token.' });
     }
 };
+// --- ОТПРАВКА ЗАЯВКИ В TELEGRAM ---
+app.post('/api/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+    
+    // Формируем текст сообщения
+    const text = `🚨 Новая заявка с FitTrack!\n\n👤 Имя: ${name}\n✉️ Email: ${email}\n📝 Сообщение:\n${message}`;
+    
+    try {
+        // Отправляем в Telegram API
+        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: text
+            })
+        });
+        
+        if (response.ok) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        console.error("Telegram API Error:", error);
+        res.status(500).json({ success: false });
+    }
+});
 
 // =========================================
 // 1. АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
@@ -100,14 +128,18 @@ app.post('/login', async (req, res) => {
 // 2. ЛИЧНЫЙ КАБИНЕТ И ДАННЫЕ (SPA)
 // =========================================
 app.get('/api/user-data', authMiddleware, async (req, res) => {
+    const targetDate = req.query.date || new Date().toISOString().split('T')[0];
     try {
-        // Теперь достаем пользователя вместе с его тренировками и едой
         const user = await prisma.user.findUnique({
             where: { username: req.user.username },
-            include: { workouts: true, meals: true }
+            include: {
+                workouts: { where: { date: targetDate } }, 
+                meals: { where: { date: targetDate } }     
+            }
         });
         
-        if (!user) return res.status(404).json({ success: false });
+        
+        if (!user) return res.status(404).json({ message: "User not found" });
 
         res.json({ 
             success: true, 
@@ -122,35 +154,35 @@ app.get('/api/user-data', authMiddleware, async (req, res) => {
             meals: user.meals || []
         });
     } catch (error) { 
-        res.status(500).json({ success: false }); 
+        res.status(500).json({ error: "Server error" }); 
     }
 });
 
 // Обновление профиля (Cloudinary) - ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
 // Обновление профиля
+// Обновление профиля
 app.post('/api/profile', authMiddleware, (req, res, next) => {
     upload.single('photo')(req, res, (err) => {
-        if (err) {
-            console.error("ОШИБКА MULTER:", err);
-            return res.status(400).json({ success: false, message: "File upload error: " + err.message });
-        }
+        if (err) return res.status(400).json({ success: false, message: "Upload error" });
         next();
     });
 }, async (req, res) => {
-    // УБРАЛИ 'skills' ИЗ ЭТОЙ СТРОКИ
-    const { bio, location, telegram, github } = req.body;
+    // ВАЖНО: Добавили calorieGoal, weight, height
+    const { bio, location, telegram, github, calorieGoal, weight, height } = req.body;
     
     try {
         const updateData = {
             bio: bio || "",
             location: location || "",
-            // УБРАЛИ 'skills' ОТСЮДА
             telegram: telegram || "",
-            github: github || ""
+            github: github || "",
+            // Аккуратно конвертируем в числа. Если пусто - оставляем дефолт или null
+            calorieGoal: calorieGoal ? parseInt(calorieGoal) : 2500,
+            weight: weight ? parseFloat(weight) : null,
+            height: height ? parseFloat(height) : null
         };
 
         if (req.file) {
-            // ... остальной код (он правильный)
             const uploadFromBuffer = (req) => {
                 return new Promise((resolve, reject) => {
                     const cld_upload_stream = cloudinary.uploader.upload_stream(
@@ -164,7 +196,7 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
                 });
             };
             const result = await uploadFromBuffer(req);
-            updateData.photo = result.secure_url;
+            updateData.photo = result.secure_url; 
         }
 
         await prisma.user.update({
@@ -173,43 +205,41 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
         });
 
         res.json({ success: true });
-    } catch (error) {
-        console.error("ОШИБКА ВНУТРИ МАРШРУТА:", error);
-        res.status(500).json({ success: false, message: error.message });
-    }
+    } catch (error) { 
+        console.error("Profile update error:", error);
+        res.status(500).json({ success: false }); 
+    }  
 });
 
-// --- НОВОЕ: ДОБАВЛЕНИЕ ТРЕНИРОВКИ ---
+// Тренировки
 app.post('/api/workouts', authMiddleware, async (req, res) => {
-    const { title, notes } = req.body;
-    if (!title) return res.status(400).json({ success: false });
-
+    const { title, notes, date } = req.body; // Принимаем date
     try {
-        const newWorkout = await prisma.workout.create({
-            data: {
-                title,
-                notes: notes || "",
-                user: { connect: { username: req.user.username } }
+        const workout = await prisma.workout.create({
+            data: { 
+                title, 
+                notes, 
+                date: date, // Записываем дату
+                user: { connect: { username: req.user.username } } 
             }
         });
-        res.json({ success: true, workout: newWorkout });
+        res.json({ success: true, workout });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// --- НОВОЕ: ДОБАВЛЕНИЕ ЕДЫ / КАЛОРИЙ ---
+// Питание
 app.post('/api/meals', authMiddleware, async (req, res) => {
-    const { itemName, calories } = req.body;
-    if (!itemName) return res.status(400).json({ success: false });
-
+    const { itemName, calories, date } = req.body; // Принимаем date
     try {
-        const newMeal = await prisma.meal.create({
-            data: {
-                itemName,
-                calories: parseInt(calories) || 0,
-                user: { connect: { username: req.user.username } }
+        const meal = await prisma.meal.create({
+            data: { 
+                itemName, 
+                calories: parseInt(calories), 
+                date: date, // Записываем дату
+                user: { connect: { username: req.user.username } } 
             }
         });
-        res.json({ success: true, meal: newMeal });
+        res.json({ success: true, meal });
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
@@ -221,9 +251,11 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
         const updateData = {
             bio: bio || "",
             location: location || "",
-            skills: skills || "",
             telegram: telegram || "",
-            github: github || ""
+            github: github || "",
+            calorieGoal: calorieGoal ? parseInt(calorieGoal) : 2500,
+            weight: weight ? parseFloat(weight) : null,
+            height: height ? parseFloat(height) : null
         };
 
         if (req.file) {

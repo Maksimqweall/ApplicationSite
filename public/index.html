@@ -3,192 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitTrack | Smart Workout & Nutrition</title>
+    <title>FitTrack | Liquid Glass Edition</title>
     <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- ЖИДКИЙ АМБИЕНТ-ФОН -->
+    <div class="liquid-ambient-backend">
+        <div class="blob blob-cyan"></div>
+        <div class="blob blob-purple"></div>
+        <div class="blob blob-blue"></div>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
     <header class="header">
         <nav class="nav">
-            <a href="/" id="logo-link" class="logo">FitTrack.app</a>
+            <a href="/" id="logo-link" class="logo">FitTrack<span class="dot">.</span></a>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#how-it-works" class="nav-home-link">Features</a></li>
-                <li><a href="#how-it-works" class="nav-home-link">How it Works</a></li>
+                <li><a href="#about" class="nav-home-link">Vision</a></li>
+                <li><a href="#how-it-works" class="nav-home-link">Ecosystem</a></li>
                 <li><a href="#contact" class="nav-home-link">Support</a></li>
-                <li><a href="#" id="open-auth" class="highlight">Login</a></li>
+                <li><a href="#" id="open-auth" class="highlight">Sign In</a></li>
             </ul>
         </nav>
     </header>
 
-    <main id="landing-page">
+    <!-- ЛЕНДИНГ (ГЛАВНАЯ СТРАНИЦА) -->
+    <main id="landing-page" class="page-view">
+        
+        <!-- HERO -->
         <section class="hero" id="about">
-            <h1>Your Personal <br><span class="highlight">Fitness Architect</span></h1>
-            <p>A smart workout and nutrition tracker designed to eliminate chaos from your daily routine. Build your physique, track macros, and monitor progress effortlessly.</p>
-            <div class="hero-actions">
-                <a href="#" id="landing-cta-btn" class="btn" onclick="document.getElementById('open-auth').click(); return false;">Get Started</a>
-                <a href="#how-it-works" class="btn btn-secondary">How it works</a>
+            <h1 class="reveal-up" style="transition-delay: 0.2s;">Your Personal <br><span class="glass-text">Fitness Architect</span></h1>
+            <p class="reveal-up" style="transition-delay: 0.3s;">A smart workout and nutrition ecosystem designed to eliminate chaos. Build your physique, track macros, and monitor progress inside a fluid, high-fidelity experience.</p>
+            <div class="hero-actions reveal-up" style="transition-delay: 0.4s;">
+                <a href="#" id="landing-cta-btn" class="btn">Start Your Journey</a>
+                <a href="#how-it-works" class="btn btn-secondary nav-home-link">Explore Features</a>
             </div>
         </section>
 
+        <!-- HOW IT WORKS (РАСШИРЕННЫЙ БЛОК) -->
         <section id="how-it-works" class="section sales-section">
-            <h2 class="section-title">Why <span class="highlight">FitTrack</span> changes the game</h2>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Minimal Clicks, Maximum Data</h3>
-                    <p>Stop wasting time. Our preset database allows you to log meals and workouts in seconds—not minutes.</p>
+            <div class="section-header reveal-up">
+                <h2 class="section-title">The <span class="glass-text">Liquid Glass</span> Engine</h2>
+                <p class="section-subtitle">We tore down the traditional fitness tracker and rebuilt it using advanced visual layering, predictive algorithms, and zero friction.</p>
+            </div>
+
+            <!-- Feature 1 -->
+            <div class="showcase-row">
+                <div class="showcase-text reveal-up">
+                    <div class="glass-icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                    <h3>Frictionless Data Entry</h3>
+                    <p>Logging your meals and workouts shouldn't feel like a spreadsheet. Our native preset database allows you to inject data into your timeline in milliseconds. Less typing, more lifting.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Precision Nutrition</h3>
-                    <p>Input your food weight in grams, and get instant, accurate caloric feedback. No more guessing games.</p>
+                <div class="showcase-visual reveal-scale">
+                    <div class="glass-mockup">
+                        <div class="mockup-header">Presets Database</div>
+                        <div class="mockup-item"><span>Chicken Breast</span> <span class="mockup-badge">165 kcal/100g</span></div>
+                        <div class="mockup-item"><span>Oatmeal (dry)</span> <span class="mockup-badge">370 kcal/100g</span></div>
+                        <div class="mockup-item highlight-mockup"><span>Whey Protein</span> <span class="mockup-badge">370 kcal/100g</span></div>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💪</div>
-                    <h3>Your Strength History</h3>
-                    <p>Your training performance is always at your fingertips. Analyze your splits and crush new personal bests.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="showcase-row reverse">
+                <div class="showcase-text reveal-up">
+                    <div class="glass-icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    <h3>Dynamic Micro-Scaling</h3>
+                    <p>Standard trackers make you guess portion sizes. FitTrack's micro-scaling engine calculates absolute caloric density based on your exact gram input in real-time. Absolute precision.</p>
+                </div>
+                <div class="showcase-visual reveal-scale">
+                    <div class="glass-mockup graphic-mode">
+                        <div class="dynamic-ring">
+                            <div class="ring-inner">
+                                <span class="ring-val">1158</span>
+                                <span class="ring-label">kcal calculated</span>
+                            </div>
+                        </div>
+                        <div class="mockup-input-fake">Almonds • 200g</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="showcase-row">
+                <div class="showcase-text reveal-up">
+                    <div class="glass-icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+                    <h3>Temporal Navigation</h3>
+                    <p>Your fitness journey is not linear. Navigate seamlessly between past achievements and future goals using our fluid temporal calendar. Every day is saved, encrypted, and instantly accessible.</p>
+                </div>
+                <div class="showcase-visual reveal-scale">
+                    <div class="glass-mockup timeline-mode">
+                        <div class="timeline-nav">
+                            <span class="timeline-arrow">◄</span>
+                            <div class="timeline-date"><strong>Today</strong><br>Jul 11, 2024</div>
+                            <span class="timeline-arrow">►</span>
+                        </div>
+                        <div class="timeline-bar"><div class="timeline-fill" style="width: 75%;"></div></div>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- ПОДДЕРЖКА -->
         <section id="contact" class="section">
-            <h2 class="section-title">Need Help or <span class="highlight">Found a Bug?</span></h2>
-            <form id="contact-form" class="contact-form">
+            <h2 class="section-title reveal-up">Need Help or <span class="glass-text">Found a Bug?</span></h2>
+            <form id="contact-form" class="contact-form card reveal-up" style="transition-delay: 0.2s;">
                 <input type="text" id="name" placeholder="Your Name" required>
                 <input type="email" id="email" placeholder="Account Email" required>
                 <textarea id="message" rows="5" placeholder="Describe your issue or feature request..." required></textarea>
-                <button type="submit" class="btn">Send to Support</button>
+                <button type="submit" class="btn btn-full">Send Request to Core Team</button>
             </form>
         </section>
     </main>
 
-    <section id="profile-page" class="section profile-page" style="display: none;">
+    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ (ЛИЧНЫЙ КАБИНЕТ) -->
+    <section id="profile-page" class="section profile-page page-view view-hidden" style="display: none;">
         <div class="profile-grid">
             
-            <div class="profile-sidebar card">
+            <!-- СЕКЦИЯ ПРОФИЛЯ -->
+            <div class="profile-sidebar card reveal-up">
                 <div class="profile-avatar-container">
                     <img id="profile-photo" src="" alt="Avatar" style="display: none;">
                     <div class="avatar-circle" id="profile-avatar-fallback">
                         <span id="avatar-letter">U</span>
                     </div>
                 </div>
-                
                 <h2 id="profile-username">Athlete</h2>
                 <p id="profile-location" class="profile-location">🌍 Earth</p>
-                <p class="status-text">Ready to train</p>
-                
-                <button id="open-edit-profile-btn" class="btn btn-sm btn-full">Edit Profile</button>
-                <button id="logout-btn" class="logout-btn mt-10">Logout</button>
-
+                <span class="status-text">Encrypted Session</span>
+                <button id="open-edit-profile-btn" class="btn btn-sm btn-full">Configure Profile</button>
+                <button id="logout-btn" class="logout-btn mt-10">Terminate Session</button>
                 <div class="profile-divider"></div>
-
                 <div class="profile-info-block">
-                    <h3>Fitness Goals / Focus</h3>
+                    <h3>Focus Objectives</h3>
                     <div id="profile-skills" class="skills-tags"></div>
                 </div>
-
                 <div class="profile-info-block">
-                    <h3>Connect</h3>
+                    <h3>Integrations</h3>
                     <div id="profile-contacts" class="contact-links"></div>
                 </div>
             </div>
 
+            <!-- ТРЕКЕРЫ ДАШБОРДА -->
             <div class="profile-main">
                 
-                <div class="card mb-20 dashboard-block">
+                <!-- Календарь -->
+                <div class="card mb-20 date-navigator reveal-up" style="transition-delay: 0.1s;">
+                    <button id="btn-prev-day" class="btn btn-secondary btn-sm" onclick="changeDay(-1)">◄</button>
+                    <div class="date-meta">
+                        <h3 id="current-date-display">Today</h3>
+                        <span id="current-date-subtitle"></span>
+                    </div>
+                    <button id="btn-next-day" class="btn btn-secondary btn-sm" onclick="changeDay(1)">►</button>
+                </div>
+                
+                <!-- Планировщик тренировок -->
+                <div class="card mb-20 dashboard-block reveal-up" style="transition-delay: 0.2s;">
                     <div class="dashboard-header">
-                        <h2>🏋️‍♂️ Workout Split Planner</h2>
+                        <h2>🏋️‍♂️ Architecture Planner</h2>
                     </div>
                     <form id="add-workout-form" class="tracker-form">
                         <select id="workout-preset" onchange="fillWorkoutPreset()">
-                            <option value="">-- Choose from database --</option>
+                            <option value="">-- Access Exercise Database --</option>
                         </select>
-                        <input type="text" id="workout-title" placeholder="Exercise name (e.g., Bench Press)" required>
-                        <input type="text" id="workout-notes" placeholder="Notes (e.g., 4 sets x 10 reps)">
-                        <button type="submit" class="btn btn-sm">Log Workout</button>
+                        <input type="text" id="workout-title" placeholder="Exercise designation" required>
+                        <input type="text" id="workout-notes" placeholder="Metrics (sets, reps, mass)">
+                        <button type="submit" class="btn btn-sm">Inject Workout</button>
                     </form>
                     <ul id="workout-list" class="item-list"></ul>
                 </div>
 
-                <div class="card dashboard-block">
-                    <div class="dashboard-header">
-                        <h2>🍽️ Daily Nutrition Log</h2>
-                        <div class="calorie-total">
-                            <span id="total-calories-display">0</span> kcal
+                <!-- Лог Питания -->
+                <div class="card dashboard-block reveal-up" style="transition-delay: 0.3s;">
+                    <div class="dashboard-header-nutrition">
+                        <div class="nav-nutrition-title-row">
+                            <h2>🍽️ Nutrition Engine</h2>
+                            <div class="calorie-total">
+                                <span id="total-calories-display">0</span> / <span id="daily-goal-display">2500</span> <span class="unit">kcal</span>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div id="calorie-progress" class="progress-bar"></div>
                         </div>
                     </div>
+                    
                     <form id="add-meal-form" class="tracker-form">
                         <select id="meal-preset" onchange="fillMealPreset()">
-                            <option value="">-- Choose from database --</option>
+                            <option value="">-- Access Nutrition Database --</option>
                         </select>
                         <div class="dual-input">
-                            <input type="text" id="meal-name" placeholder="Product name" required>
-                            <input type="number" id="meal-weight" placeholder="Weight (g)" oninput="calculateKcal()" required>
-                            <span id="calculated-kcal" style="font-weight: bold; color: #10B981;">0 kcal</span>
+                            <input type="text" id="meal-name" placeholder="Item nomenclature" required>
+                            <input type="number" id="meal-weight" placeholder="Mass (g)" oninput="calculateKcal()" required>
+                            <span id="calculated-kcal">0 kcal</span>
                         </div>
-                        <button type="submit" class="btn btn-sm btn-green">Add Item</button>
+                        <button type="submit" class="btn btn-sm btn-green">Process Macro</button>
                     </form>
                     <ul id="meal-list" class="item-list"></ul>
                 </div>
-
             </div>
         </div>
     </section>
 
+    <!-- МОДAЛКА РЕДАКТИРОВАНИЯ -->
     <div id="edit-profile-modal" class="modal">
         <div class="modal-content profile-edit-content">
             <span class="close-btn" id="close-edit-modal">&times;</span>
-            <h2>Edit Profile</h2>
+            <h2>System Configuration</h2>
             <form id="edit-profile-form" class="auth-form active-form" enctype="multipart/form-data">
-                <label>Profile Photo (Max 2MB)</label>
-                <input type="file" id="edit-photo" accept="image/png, image/jpeg, image/webp">
                 
-                <div id="crop-container" style="display: none; width: 100%; height: 300px; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2);">
+                <label>Avatar Node</label>
+                <input type="file" id="edit-photo" accept="image/png, image/jpeg, image/webp">
+                <div id="crop-container" style="display: none; width: 100%; height: 300px; margin-top: 15px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1);">
                     <img id="crop-image" src="" style="max-width: 100%; display: block;">
                 </div>
                 
-                <label>Location</label>
+                <div class="dual-input" style="margin-top: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label>Mass (kg)</label>
+                        <input type="number" step="0.1" id="edit-weight" placeholder="75.5">
+                    </div>
+                    <div>
+                        <label>Height (cm)</label>
+                        <input type="number" id="edit-height" placeholder="180">
+                    </div>
+                </div>
+                
+                <label>Caloric Target</label>
+                <input type="number" id="edit-calorie-goal" placeholder="2500" required>   
+
+                <label>Geolocator</label>
                 <input type="text" id="edit-location" placeholder="e.g. Berlin, Germany">
                 
-                <label>Goals / Focus (comma separated)</label>
-                <input type="text" id="edit-skills" placeholder="Hypertrophy, Strength, Cardio">
-                
-                <label>Telegram Username</label>
+                <label>Telegram Handle</label>
                 <input type="text" id="edit-telegram" placeholder="@username">
                 
-                <label>Social / Strava URL</label>
+                <label>External URL</label>
                 <input type="text" id="edit-github" placeholder="https://...">
                 
-                <label>Bio</label>
-                <textarea id="edit-bio" rows="3" placeholder="Tell us about your fitness journey..."></textarea>
+                <label>Bio-Data</label>
+                <textarea id="edit-bio" rows="3" placeholder="Define your parameters..."></textarea>
                 
-                <button type="submit" class="btn btn-full">Save Changes</button>
+                <button type="submit" class="btn btn-full">Sync Changes</button>
             </form>
         </div>
     </div>
 
+    <!-- МОДАЛКА АВТОРИЗАЦИИ -->
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">&times;</span>
             <div class="auth-tabs">
-                <button class="tab-btn active" id="tab-login">Login</button>
-                <button class="tab-btn" id="tab-register">Register</button>
+                <button class="tab-btn active" id="tab-login">Authenticate</button>
+                <button class="tab-btn" id="tab-register">Initialize</button>
             </div>
             <form id="login-form" class="auth-form active-form">
-                <input type="text" id="login-username" placeholder="Username" required>
-                <input type="password" id="login-password" placeholder="Password" required>
-                <button type="submit" class="btn">Sign In</button>
+                <input type="text" id="login-username" placeholder="User ID" required>
+                <input type="password" id="login-password" placeholder="Passkey" required>
+                <button type="submit" class="btn btn-full">Decrypt Session</button>
             </form>
             <form id="register-form" class="auth-form">
-                <input type="text" id="reg-username" placeholder="Choose Username" required>
-                <input type="password" id="reg-password" placeholder="Create Password" required>
-                <button type="submit" class="btn">Create Account</button>
+                <input type="text" id="reg-username" placeholder="New User ID" required>
+                <input type="password" id="reg-password" placeholder="Secure Passkey" required>
+                <button type="submit" class="btn btn-full">Create Node</button>
             </form>
         </div>
     </div>
