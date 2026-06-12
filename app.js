@@ -129,10 +129,14 @@ app.post('/login', async (req, res) => {
 // =========================================
 // --- ПОЛУЧЕНИЕ ДАННЫХ ЮЗЕРА (РАСШИРЕННЫЙ РОУТ) ---
 app.get('/api/user-data', authMiddleware, async (req, res) => {
-    const targetDate = req.query.date || new Date().toISOString().split('T')[0];
+    
+    // Бронебойная проверка даты
+    let targetDate = req.query.date;
+    if (!targetDate || targetDate === 'undefined') {
+        targetDate = new Date().toISOString().split('T')[0]; // Если даты нет, берем сегодня
+    }
 
     try {
-        // Достаем из БД юзера и ВСЕ его новые поля (weight, height, bio и тд)
         const user = await prisma.user.findUnique({
             where: { username: req.user.username },
             include: {
@@ -310,37 +314,7 @@ app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res
 
 // Добавление задач
 // --- ДОБАВЛЕНИЕ ТРЕНИРОВКИ ---
-app.post('/api/workouts', authMiddleware, async (req, res) => {
-    const { title, notes } = req.body;
-    if (!title) return res.status(400).json({ success: false });
 
-    try {
-        const newWorkout = await prisma.workout.create({
-            data: {
-                title,
-                notes: notes || "",
-                user: { connect: { username: req.user.username } }
-            }
-        });
-        res.json({ success: true, workout: newWorkout });
-    } catch (error) { res.status(500).json({ success: false }); }
-});
-
-// --- ДОБАВЛЕНИЕ ПРИЕМА ПИЩИ / КАЛОРИЙ ---
-app.post('/api/meals', authMiddleware, async (req, res) => {
-    const { itemName, calories } = req.body;
-    
-    try {
-        const newMeal = await prisma.meal.create({
-            data: {
-                itemName,
-                calories: parseInt(calories) || 0,
-                user: { connect: { username: req.user.username } }
-            }
-        });
-        res.json({ success: true, meal: newMeal });
-    } catch (error) { res.status(500).json({ success: false }); }
-});
 
 // =========================================
 // 3. МАРШРУТ TELEGRAM И СТАТИКА

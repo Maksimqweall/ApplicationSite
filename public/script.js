@@ -154,12 +154,43 @@ const PRESETS = {
     ]
 };
 
+// Функция для получения даты в формате YYYY-MM-DD с учетом локальной временной зоны
+function getLocalISOString(date) {
+    const offset = date.getTimezoneOffset() * 60000;
+    return (new Date(date - offset)).toISOString().split('T')[0];
+}
+
+window.currentAppDate = getLocalISOString(new Date());
+
+// Функция для смены текущей даты (вперед или назад на offset дней)
+window.changeDay = async function(offset) {
+    const dateObj = new Date(window.currentAppDate);
+    dateObj.setDate(dateObj.getDate() + offset);
+    window.currentAppDate = getLocalISOString(dateObj);
+    updateDateDisplay();
+    
+    // Эффект обновления данных (затемнение и небольшое уменьшение масштаба)
+    const mainArea = document.querySelector('.profile-main');
+    if(mainArea){
+        mainArea.style.opacity = '0.5';
+        mainArea.style.transform = 'scale(0.98)';
+        
+        await loadUserData();
+        
+        setTimeout(() => {
+            mainArea.style.opacity = '1';
+            mainArea.style.transform = 'scale(1)';
+            mainArea.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        }, 150);
+    }
+};
+
 // Обновление отображения текущей даты на UI
 function updateDateDisplay() {
     const today = getLocalISOString(new Date());
     const displayTitle = document.getElementById('current-date-display');
     const displaySubtitle = document.getElementById('current-date-subtitle');
-    
+
     if (displayTitle && displaySubtitle) {
         if (window.currentAppDate === today) {
             displayTitle.textContent = "Today";
@@ -170,7 +201,6 @@ function updateDateDisplay() {
         displaySubtitle.textContent = window.currentAppDate;
     }
 }
-
 // =========================================
 // 2. ДВИЖОК АНИМАЦИЙ (SCROLL REVEAL & PAGE SWAP)
 // =========================================
