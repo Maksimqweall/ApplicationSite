@@ -127,34 +127,40 @@ app.post('/login', async (req, res) => {
 // =========================================
 // 2. ЛИЧНЫЙ КАБИНЕТ И ДАННЫЕ (SPA)
 // =========================================
+// --- ПОЛУЧЕНИЕ ДАННЫХ ЮЗЕРА (РАСШИРЕННЫЙ РОУТ) ---
 app.get('/api/user-data', authMiddleware, async (req, res) => {
     const targetDate = req.query.date || new Date().toISOString().split('T')[0];
+
     try {
+        // Достаем из БД юзера и ВСЕ его новые поля (weight, height, bio и тд)
         const user = await prisma.user.findUnique({
             where: { username: req.user.username },
             include: {
-                workouts: { where: { date: targetDate } }, 
-                meals: { where: { date: targetDate } }     
+                meals: { where: { date: targetDate } },
+                workouts: { where: { date: targetDate } }
             }
         });
-        
-        
-        if (!user) return res.status(404).json({ message: "User not found" });
 
-        res.json({ 
-            success: true, 
-            username: user.username, 
-            bio: user.bio || "",
-            photo: user.photo || "",
-            location: user.location || "",
-            skills: user.skills || "",
-            telegram: user.telegram || "",
-            github: user.github || "",
-            workouts: user.workouts || [],
-            meals: user.meals || []
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        // Отправляем на фронтенд полный пакет данных
+        res.json({
+            success: true,
+            username: user.username,
+            photo: user.photo,
+            location: user.location,
+            bio: user.bio,
+            telegram: user.telegram,
+            github: user.github,
+            weight: user.weight,
+            height: user.height,
+            calorieGoal: user.calorieGoal,
+            meals: user.meals,
+            workouts: user.workouts
         });
-    } catch (error) { 
-        res.status(500).json({ error: "Server error" }); 
+    } catch (error) {
+        console.error("Fetch Data Error:", error);
+        res.status(500).json({ success: false });
     }
 });
 

@@ -1043,3 +1043,56 @@ input:focus, textarea:focus, .tracker-form select:focus {
 }
 .toast.show { transform: translateY(0) scale(1); opacity: 1; }
 .toast.error { border-left-color: var(--ios-red); }
+
+/* ==========================================================================
+   MOBILE OPTIMIZATION (iOS RESPONSIVE DESIGN)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* 1. Навигация и Шапка */
+    .header { padding: 10px 0; }
+    .nav { flex-direction: column; gap: 15px; padding: 10px; }
+    .nav-links { gap: 15px; flex-wrap: wrap; justify-content: center; }
+
+    /* 2. Лендинг (Главная) */
+    .hero { padding-top: 100px; padding-bottom: 50px; }
+    .hero-title { font-size: 2.5rem; line-height: 1.1; }
+    .hero-subtitle { font-size: 1rem; padding: 0 15px; }
+
+    /* 3. Дашборд (Профиль) */
+    .profile-container { padding: 15px; margin-top: 80px; }
+    
+    /* Убиваем две колонки — делаем одну сплошную */
+    .profile-grid { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 20px; 
+    }
+    
+    /* Отключаем прилипание левой панели, чтобы она прокручивалась как все */
+    .profile-sidebar { position: static; top: auto; }
+    
+    /* Калькулятор и списки */
+    .meal-input-group, .workout-input-group { flex-direction: column; gap: 10px; }
+    .meal-input-group input, .workout-input-group input,
+    .meal-input-group select, .workout-input-group select,
+    .meal-input-group button, .workout-input-group button { 
+        width: 100%; 
+    }
+
+    /* 4. Модальные окна */
+    .modal-content { 
+        width: 95%; 
+        padding: 25px 20px; 
+        margin-top: 15%; 
+        max-height: 80vh; 
+        overflow-y: auto; 
+    }
+    .auth-tabs { gap: 10px; flex-wrap: wrap; justify-content: center; }
+}
+
+/* Для совсем маленьких экранов (iPhone SE и т.д.) */
+@media (max-width: 480px) {
+    .hero-title { font-size: 2rem; }
+    .stat-circle { width: 120px; height: 120px; }
+    .stat-value { font-size: 1.5rem; }
+}

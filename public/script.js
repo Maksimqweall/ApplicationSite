@@ -842,7 +842,7 @@ window.handleCredentialResponse = async function(response) {
 function initGoogleAuth() {
     if (typeof google !== 'undefined') {
         google.accounts.id.initialize({
-            client_id: "ТВОЙ_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Замени на свой ID
+            client_id: "311190288090-7cqes2gcihvfr6bsrkpe7mp7kggu3ntf.apps.googleusercontent.com", // Замени на свой ID
             callback: window.handleCredentialResponse
         });
         
