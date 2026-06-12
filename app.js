@@ -219,35 +219,49 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
     }  
 });
 // Тренировки
+// =========================================
+// ДОБАВЛЕНИЕ ТРЕНИРОВОК И ПИТАНИЯ
+// =========================================
 app.post('/api/workouts', authMiddleware, async (req, res) => {
-    const { title, notes, date } = req.body; // Принимаем date
+    const { title, notes, date } = req.body;
+    if (!title) return res.status(400).json({ success: false, message: "Title is required" });
+
     try {
+        const targetDate = date || new Date().toISOString().split('T')[0];
         const workout = await prisma.workout.create({
             data: { 
                 title, 
-                notes, 
-                date: date, // Записываем дату
+                notes: notes || "", 
+                date: targetDate, 
                 user: { connect: { username: req.user.username } } 
             }
         });
         res.json({ success: true, workout });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error("Workout Error:", error);
+        res.status(500).json({ success: false, message: "Database error" }); 
+    }
 });
 
-// Питание
 app.post('/api/meals', authMiddleware, async (req, res) => {
-    const { itemName, calories, date } = req.body; // Принимаем date
+    const { itemName, calories, date } = req.body;
+    if (!itemName) return res.status(400).json({ success: false, message: "Item name is required" });
+
     try {
+        const targetDate = date || new Date().toISOString().split('T')[0];
         const meal = await prisma.meal.create({
             data: { 
                 itemName, 
-                calories: parseInt(calories), 
-                date: date, // Записываем дату
+                calories: parseInt(calories) || 0, 
+                date: targetDate, 
                 user: { connect: { username: req.user.username } } 
             }
         });
         res.json({ success: true, meal });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error("Meal Error:", error);
+        res.status(500).json({ success: false, message: "Database error" }); 
+    }
 });
 
 // Обновление профиля (Cloudinary)
