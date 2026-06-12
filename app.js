@@ -80,7 +80,6 @@ app.post('/api/contact', async (req, res) => {
 // 1. АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
 // =========================================
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
     const username = req.body.username.trim(); 
     const password = req.body.password.trim();
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -106,7 +105,6 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     const username = req.body.username.trim(); 
     const password = req.body.password.trim();
-    const { username, password } = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { username } });
         if (!user) return res.status(400).json({ success: false, message: 'User not found' });
