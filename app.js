@@ -48,14 +48,13 @@ const authMiddleware = (req, res, next) => {
     }
 };
 // --- ОТПРАВКА ЗАЯВКИ В TELEGRAM ---
+// --- ОТПРАВКА ЗАЯВКИ В TELEGRAM ---
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
     
-    // Формируем текст сообщения
     const text = `🚨 Новая заявка с FitTrack!\n\n👤 Имя: ${name}\n✉️ Email: ${email}\n📝 Сообщение:\n${message}`;
     
     try {
-        // Отправляем в Telegram API
         const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -68,10 +67,14 @@ app.post('/api/contact', async (req, res) => {
         if (response.ok) {
             res.json({ success: true });
         } else {
+            // Вскрываем ответ Telegram, чтобы понять причину отказа!
+            const errorDetails = await response.text(); 
+            console.error("🚨 Telegram отклонил запрос. Статус:", response.status);
+            console.error("🚨 Причина от Telegram:", errorDetails);
             res.status(500).json({ success: false });
         }
     } catch (error) {
-        console.error("Telegram API Error:", error);
+        console.error("Telegram API Error (Network):", error);
         res.status(500).json({ success: false });
     }
 });
