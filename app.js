@@ -48,7 +48,6 @@ const authMiddleware = (req, res, next) => {
     }
 };
 // --- ОТПРАВКА ЗАЯВКИ В TELEGRAM ---
-// --- ОТПРАВКА ЗАЯВКИ В TELEGRAM ---
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
     
