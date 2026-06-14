@@ -153,6 +153,97 @@ const PRESETS = {
         { title: "Jump Rope", notes: "15 min interval" }
     ]
 };
+// =========================================
+// БАЗА ДАННЫХ ПРОГРАММ ТРЕНИРОВОК
+// =========================================
+window.WORKOUT_PROGRAMS = {
+    "custom": {
+        name: "Custom Architect",
+        description: "Build your own routine from scratch with absolute freedom."
+    },
+    "arnold_ppl": {
+        name: "Arnold x PPL Hybrid",
+        description: "6-day elite high-volume hypertrophy block combining golden-era chest/back splits with modern PPL.",
+        schedule: {
+            1: [ 
+                { title: "Barbell Bench Press", notes: "4 sets x 8-10 reps" },
+                { title: "Pull-ups (Weighted)", notes: "3 sets x 6-8 reps" },
+                { title: "Incline Dumbbell Press", notes: "3 sets x 10-12 reps" },
+                { title: "Seated Cable Row", notes: "4 sets x 10-12 reps" },
+                { title: "Dumbbell Shrugs", notes: "3 sets x 12-15 reps" }
+            ],
+            2: [ 
+                { title: "Overhead Press (OHP)", notes: "4 sets x 6-8 reps" },
+                { title: "Barbell Bicep Curl", notes: "3 sets x 10-12 reps" },
+                { title: "Skullcrushers (EZ-Bar)", notes: "3 sets x 10-12 reps" },
+                { title: "Lateral Raises (Dumbbell)", notes: "4 sets x 15 reps" },
+                { title: "Hammer Curls", notes: "3 sets x 12 reps" }
+            ],
+            3: [ 
+                { title: "Barbell Squat", notes: "4 sets x 6-8 reps" },
+                { title: "Romanian Deadlift (RDL)", notes: "4 sets x 8-10 reps" },
+                { title: "Leg Press", notes: "3 sets x 10-12 reps" },
+                { title: "Standing Calf Raises", notes: "4 sets x 15-20 reps" }
+            ],
+            4: [ 
+                { title: "Dumbbell Bench Press", notes: "4 sets x 8-10 reps" },
+                { title: "Incline Barbell Press", notes: "3 sets x 8-12 reps" },
+                { title: "Cable Crossovers", notes: "3 sets x 12-15 reps" },
+                { title: "Tricep Pushdown (Rope)", notes: "4 sets x 12-15 reps" }
+            ],
+            5: [ 
+                { title: "Lat Pulldown (Wide Grip)", notes: "4 sets x 10-12 reps" },
+                { title: "Dumbbell Row (One Arm)", notes: "3 sets x 10-12 reps" },
+                { title: "Face Pulls", notes: "4 sets x 15-20 reps" },
+                { title: "Dumbbell Alternate Curl", notes: "3 sets x 10-12 reps" }
+            ],
+            6: [ 
+                { title: "Leg Press", notes: "4 sets x 10-12 reps" },
+                { title: "Lying Leg Curls", notes: "3 sets x 12-15 reps" },
+                { title: "Bulgarian Split Squats", notes: "3 sets x 10 reps" },
+                { title: "Plank", notes: "3 sets x 60 seconds" }
+            ],
+            0: [] 
+        }
+    },
+    "classic_ppl": {
+        name: "Classic Push / Pull / Legs",
+        description: "The gold standard of training splits. Perfect for systematic strength and recovery balance.",
+        schedule: {
+            1: [ { title: "Barbell Bench Press", notes: "4 sets x 6-8 reps" }, { title: "Overhead Press", notes: "3 sets x 8 reps" }, { title: "Incline Dumbbell Press", notes: "3 sets x 10 reps" }, { title: "Tricep Pushdown", notes: "3 sets x 12 reps" } ],
+            2: [ { title: "Deadlift", notes: "1 warm-up, 2 working x 5 reps" }, { title: "Pull-ups", notes: "3 sets to failure" }, { title: "Seated Cable Row", notes: "3 sets x 10 reps" }, { title: "Barbell Bicep Curl", notes: "3 sets x 12 reps" } ],
+            3: [ { title: "Barbell Squat", notes: "4 sets x 6-8 reps" }, { title: "Romanian Deadlift", notes: "3 sets x 10 reps" }, { title: "Leg Extensions", notes: "3 sets x 15 reps" }, { title: "Seated Calf Raises", notes: "4 sets x 15 reps" } ],
+            4: [ { title: "Barbell Bench Press", notes: "4 sets x 6-8 reps" }, { title: "Overhead Press", notes: "3 sets x 8 reps" }, { title: "Incline Dumbbell Press", notes: "3 sets x 10 reps" }, { title: "Tricep Pushdown", notes: "3 sets x 12 reps" } ],
+            5: [ { title: "Pull-ups", notes: "3 sets to failure" }, { title: "Barbell Row", notes: "3 sets x 8 reps" }, { title: "Face Pulls", notes: "4 sets x 15 reps" }, { title: "Hammer Curls", notes: "3 sets x 12 reps" } ],
+            6: [ { title: "Barbell Squat", notes: "4 sets x 6-8 reps" }, { title: "Leg Press", notes: "3 sets x 12 reps" }, { title: "Lying Leg Curls", notes: "3 sets x 12 reps" } ],
+            0: []
+        }
+    },
+    "upper_lower": {
+        name: "4-Day Upper / Lower Split",
+        description: "Optimized frequency block hitting every major muscle group twice a week with maximum recovery.",
+        schedule: {
+            1: [ { title: "Barbell Bench Press", notes: "4 sets x 6-8 reps" }, { title: "Barbell Row", notes: "4 sets x 6-8 reps" }, { title: "Dumbbell Press", notes: "3 sets x 10 reps" }, { title: "Lat Pulldown", notes: "3 sets x 10 reps" } ],
+            2: [ { title: "Barbell Squat", notes: "4 sets x 6-8 reps" }, { title: "Romanian Deadlift", notes: "3 sets x 8-10 reps" }, { title: "Leg Press", notes: "3 sets x 12 reps" }, { title: "Hanging Leg Raises", notes: "3 sets x 15 reps" } ],
+            3: [], 
+            4: [ { title: "Incline Barbell Press", notes: "4 sets x 8 reps" }, { title: "Pull-ups", notes: "4 sets to failure" }, { title: "Lateral Raises", notes: "4 sets x 15 reps" }, { title: "Tricep Skullcrushers", notes: "3 sets x 12 reps" } ],
+            5: [ { title: "Deadlift", notes: "3 sets x 5 reps" }, { title: "Bulgarian Split Squats", notes: "3 sets x 10 reps" }, { title: "Seated Calf Raises", notes: "4 sets x 15 reps" }, { title: "Plank", notes: "3 sets x 60 seconds" } ],
+            6: [], 0: [] 
+        }
+    },
+    "full_body": {
+        name: "High Intensity Full Body",
+        description: "3-day high-efficiency full body routine built around heavy compound movements.",
+        schedule: {
+            1: [ { title: "Barbell Squat", notes: "3 sets x 6-8 reps" }, { title: "Barbell Bench Press", notes: "3 sets x 6-8 reps" }, { title: "Barbell Row", notes: "3 sets x 8 reps" }, { title: "Overhead Press", notes: "2 sets x 8 reps" } ],
+            2: [], 
+            3: [ { title: "Deadlift", notes: "3 sets x 5 reps" }, { title: "Incline Dumbbell Press", notes: "3 sets x 10 reps" }, { title: "Lat Pulldown", notes: "3 sets x 10 reps" }, { title: "Barbell Bicep Curl", notes: "3 sets x 12 reps" } ],
+            4: [], 
+            5: [ { title: "Barbell Squat", notes: "3 sets x 6-8 reps" }, { title: "Dumbbell Bench Press", notes: "3 sets x 8-10 reps" }, { title: "Pull-ups", notes: "3 sets to failure" }, { title: "Face Pulls", notes: "3 sets x 15 reps" } ],
+            6: [], 0: [] 
+        }
+    }
+};
 
 // Функция для получения даты в формате YYYY-MM-DD с учетом локальной временной зоны
 function getLocalISOString(date) {
@@ -186,21 +277,44 @@ window.changeDay = async function(offset) {
 };
 
 // Обновление отображения текущей даты на UI
-function updateDateDisplay() {
-    const today = getLocalISOString(new Date());
+// Обновление отображения текущей даты на UI + Авто-Сплит (Arnold x PPL)
+window.updateDateDisplay = function() {
+    const today = window.getLocalISOString(new Date());
     const displayTitle = document.getElementById('current-date-display');
     const displaySubtitle = document.getElementById('current-date-subtitle');
+
+    // Архитектура 7-дневного цикла
+    const ARNOLD_PPL_SPLIT = {
+        1: "Arnold: Chest & Back",   // Понедельник
+        2: "Arnold: Shoulders & Arms",// Вторник
+        3: "Arnold: Legs",           // Среда
+        4: "PPL: Push",              // Четверг
+        5: "PPL: Pull",              // Пятница
+        6: "PPL: Legs",              // Суббота
+        0: "Rest / Active Recovery"  // Воскресенье
+    };
+    
+    const dateObj = new Date(window.currentAppDate);
+    const dayOfWeek = dateObj.getDay();
+    const currentSplit = ARNOLD_PPL_SPLIT[dayOfWeek];
 
     if (displayTitle && displaySubtitle) {
         if (window.currentAppDate === today) {
             displayTitle.textContent = "Today";
         } else {
-            const d = new Date(window.currentAppDate);
-            displayTitle.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-        }
-        displaySubtitle.textContent = window.currentAppDate;
+            displayTitle.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        }             
     }
-}
+
+    // Автоматическое заполнение названия тренировки в форме
+    const workoutTitleEl = document.getElementById('workout-title');
+    if (workoutTitleEl && currentSplit !== "Rest / Active Recovery") {
+        // Заполняем поле только в том случае, если оно пустое
+        if (workoutTitleEl.value === '') {
+            workoutTitleEl.value = `[${currentSplit}] `;
+        }
+    }
+};
 // =========================================
 // 2. ДВИЖОК АНИМАЦИЙ (SCROLL REVEAL & PAGE SWAP)
 // =========================================
@@ -515,11 +629,62 @@ async function loadUserData() {
                     }
                 }, 100);
             }
+            // Подтягиваем значение программы в форму редактирования
+            const activeProgramSelect = document.getElementById('edit-active-program');
+            if (activeProgramSelect) activeProgramSelect.value = data.activeProgram || 'custom';
+
+            // УПРАВЛЕНИЕ ВИДЖЕТОМ ШАБЛОНОВ (В ЛИЦО ПОЛЬЗОВАТЕЛЮ)
+            const templateWidget = document.getElementById('template-widget');
+            const programSelector = document.getElementById('program-selector-widget');
+            const templateDayTitle = document.getElementById('template-day-title');
+            const templatePreview = document.getElementById('template-exercises-preview');
+            
+            const currentProgramId = data.activeProgram || 'custom';
+            
+            if (currentProgramId === 'custom') {
+                // Если не выбрано — показываем большую сетку карточек
+                if (programSelector) {
+                    programSelector.style.display = 'block';
+                    if (typeof window.renderProgramGrid === 'function') window.renderProgramGrid(currentProgramId);
+                }
+                if (templateWidget) templateWidget.style.display = 'none';
+            } else {
+                // Если выбрано — прячем карточки, показываем план на сегодня
+                if (programSelector) programSelector.style.display = 'none';
+                if (templateWidget) templateWidget.style.display = 'block';
+                
+                const dateObj = new Date(window.currentAppDate);
+                const dayOfWeek = dateObj.getDay();
+                const program = window.WORKOUT_PROGRAMS[currentProgramId];
+                const todaysExercises = (program && program.schedule) ? program.schedule[dayOfWeek] : [];
+                
+                if (!todaysExercises || todaysExercises.length === 0) {
+                    if (templateDayTitle) templateDayTitle.textContent = "Active Recovery Day";
+                    if (templatePreview) templatePreview.textContent = "No mandatory compound protocols scheduled for today. Focus on systemic recovery.";
+                    const injectBtn = document.getElementById('btn-inject-template');
+                    if (injectBtn) injectBtn.style.display = 'none';
+                } else {
+                    const injectBtn = document.getElementById('btn-inject-template');
+                    if (injectBtn) injectBtn.style.display = 'inline-block';
+                    
+                    if (templateDayTitle) templateDayTitle.textContent = `${program.name} Target`;
+                    
+                    const titles = todaysExercises.map(ex => ex.title).join(', ');
+                    if (templatePreview) templatePreview.textContent = `Scheduled: ${titles}`;
+                }
+            }
+
+            if (typeof window.loadAnalytics === 'function') {
+                window.loadAnalytics();
+            }
+
+            if (typeof window.loadHeatmap === 'function') {
+                window.loadHeatmap();
+            }
 
             return true;
         } else {
             clearAuthSession();
-            return false;
         }
     } catch (error) { 
         console.error("Error loading user data:", error);
@@ -761,6 +926,7 @@ if (editProfileForm) {
         formData.append('weight', getVal('edit-weight'));
         formData.append('height', getVal('edit-height'));
         formData.append('calorieGoal', getVal('edit-calorie-goal'));
+        formData.append('activeProgram', getVal('edit-active-program'));
 
         try {
             const response = await fetch('/api/profile', {
@@ -956,6 +1122,401 @@ function initPwaPrompt() {
         }
     }
 }
+// =========================================
+// 9. АНАЛИТИКА (CHART.JS LIQUID GLASS)
+// =========================================
+let analyticsChart = null;
+
+window.loadAnalytics = async function() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/analytics', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            renderChart(data.history, data.calorieGoal);
+        }
+    } catch (error) { 
+        console.error("Chart Error:", error); 
+    }
+};
+
+function renderChart(history, goal) {
+    const ctx = document.getElementById('analyticsChart');
+    if (!ctx) return;
+
+    const labels = [];
+    const dataPoints = [];
+    const goalPoints = [];
+
+    // Генерируем массив из последних 7 дней (слева направо)
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const isoDate = window.getLocalISOString(d);
+        
+        // Форматируем дату красиво: "Mon", "Tue" и т.д.
+        labels.push(d.toLocaleDateString('en-US', { weekday: 'short' })); 
+        dataPoints.push(history[isoDate] || 0);
+        goalPoints.push(goal);
+    }
+
+    // Если график уже существует — уничтожаем его перед новой отрисовкой
+    if (analyticsChart) {
+        analyticsChart.destroy(); 
+    }
+
+    // Глобальные настройки шрифтов под дизайн системы
+    Chart.defaults.color = '#94A3B8';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    // Создаем градиент для заливки под линией графика
+    const canvasContext = ctx.getContext('2d');
+    const gradient = canvasContext.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(14, 165, 233, 0.25)'); // Неоновый голубой (верх)
+    gradient.addColorStop(1, 'rgba(14, 165, 233, 0.0)');  // Прозрачный (низ)
+
+    analyticsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Intake',
+                    data: dataPoints,
+                    borderColor: '#0EA5E9',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    tension: 0.4, // Плавные изгибы
+                    fill: true,
+                    pointBackgroundColor: '#030712',
+                    pointBorderColor: '#0EA5E9',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#0EA5E9',
+                    pointHoverBorderColor: '#fff'
+                },
+                {
+                    label: 'Target Goal',
+                    data: goalPoints,
+                    borderColor: 'rgba(52, 199, 89, 0.4)', // Зеленый пунктир
+                    borderWidth: 2,
+                    borderDash: [6, 6],
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 0, // Убираем точки с линии цели
+                    pointHoverRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false, // Тултип появляется при наведении на любую часть колонки
+            },
+            plugins: {
+                legend: { display: false }, // Убираем лишний визуальный мусор
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                    titleColor: '#fff',
+                    bodyColor: '#F8FAFC',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    padding: 14,
+                    cornerRadius: 12,
+                    displayColors: true,
+                    boxPadding: 6,
+                    callbacks: {
+                        label: function(context) { 
+                            return ` ${context.dataset.label}: ${context.parsed.y} kcal`; 
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
+                    border: { display: false },
+                    ticks: { maxTicksLimit: 5, padding: 12 }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    border: { display: false },
+                    ticks: { padding: 10 }
+                }
+            }
+        }
+    });
+}
+// =========================================
+// 10. HEATMAP ENGINE
+// =========================================
+window.loadHeatmap = async function() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/heatmap', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            renderHeatmapGrid(data.activeDays);
+        }
+    } catch (error) { console.error("Heatmap Error:", error); }
+};
+
+function renderHeatmapGrid(activeDays) {
+    const grid = document.getElementById('heatmap-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Генерируем 84 квадратика (от 83 дней назад до сегодня)
+    for (let i = 83; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const isoDate = window.getLocalISOString(d);
+        
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        
+        // Проверяем, есть ли эта дата в массиве тренировок
+        if (activeDays.includes(isoDate)) {
+            cell.classList.add('active');
+            cell.setAttribute('data-info', `${isoDate}: Protocol Executed`);
+        } else {
+            cell.setAttribute('data-info', `${isoDate}: Rest Day`);
+        }
+
+        grid.appendChild(cell);
+    }
+}
+// =========================================
+// 11. REST TIMER ENGINE (WEB AUDIO API)
+// =========================================
+let restTimerInterval = null;
+let restTimeLeft = 90; // Дефолтное время отдыха (90 сек)
+let isTimerRunning = false;
+
+window.updateTimerDisplay = function() {
+    const display = document.getElementById('timer-display');
+    if (!display) return;
+    const m = Math.floor(restTimeLeft / 60).toString().padStart(2, '0');
+    const s = (restTimeLeft % 60).toString().padStart(2, '0');
+    display.textContent = `${m}:${s}`;
+};
+
+// Синтезируем звук прямо процессором устройства (не нужен mp3 файл)
+window.playTimerBeep = function() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime); // Тонкости частоты (Нота А5)
+        
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime); // Мягкая громкость (10%)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5); // Плавное затухание
+        
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+    } catch(e) { console.log("Audio API not supported on this browser."); }
+};
+
+document.getElementById('btn-timer-start')?.addEventListener('click', function() {
+    const btn = this;
+    const display = document.getElementById('timer-display');
+    
+    if (isTimerRunning) {
+        // Пауза
+        clearInterval(restTimerInterval);
+        isTimerRunning = false;
+        btn.textContent = 'Start';
+        btn.style.background = 'var(--ios-cyan)';
+        btn.style.color = '#000';
+        display.classList.remove('timer-active');
+    } else {
+        // Старт
+        isTimerRunning = true;
+        btn.textContent = 'Pause';
+        btn.style.background = 'rgba(255, 255, 255, 0.1)';
+        btn.style.color = 'var(--text-main)';
+        display.classList.add('timer-active');
+        
+        if (restTimeLeft === 0) restTimeLeft = 90; 
+        
+        restTimerInterval = setInterval(() => {
+            restTimeLeft--;
+            window.updateTimerDisplay();
+            
+            if (restTimeLeft <= 0) {
+                // Таймер вышел
+                clearInterval(restTimerInterval);
+                isTimerRunning = false;
+                btn.textContent = 'Start';
+                btn.style.background = 'var(--ios-cyan)';
+                btn.style.color = '#000';
+                display.classList.remove('timer-active');
+                
+                window.playTimerBeep(); // Издаем звук
+                restTimeLeft = 90; // Сбрасываем обратно на 90
+                window.updateTimerDisplay();
+            }
+        }, 1000);
+    }
+});
+
+document.getElementById('btn-timer-add')?.addEventListener('click', () => {
+    restTimeLeft += 30; // Добавляем 30 секунд
+    window.updateTimerDisplay();
+});
+// Автоматический массовый импорт тренировки из выбранного шаблона
+document.getElementById('btn-inject-template')?.addEventListener('click', async function() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    this.textContent = 'Injecting Protocol...';
+    this.disabled = true;
+
+    try {
+        // Запрашиваем актуальные данные профиля, чтобы знать, какая программа активна
+        const userRes = await fetch(`/api/user-data?date=${window.currentAppDate}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const userData = await userRes.json();
+        
+        if (!userData.success) {
+            this.textContent = 'Execute Template';
+            this.disabled = false;
+            return;
+        }
+
+        const programId = userData.activeProgram || 'custom';
+        const dateObj = new Date(window.currentAppDate);
+        const dayOfWeek = dateObj.getDay();
+        const exercisesToInject = window.WORKOUT_PROGRAMS[programId]?.schedule[dayOfWeek] || [];
+
+        // Делаем асинхронные POST запросы для каждого упражнения из шаблона
+        for (const ex of exercisesToInject) {
+            await fetch('/api/workouts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({
+                    title: ex.title,
+                    notes: ex.notes,
+                    date: window.currentAppDate
+                })
+            });
+        }
+
+        window.showToast('Workout Protocol Injected successfully!', 'success');
+        await window.loadUserData(); // Перерисовываем UI дашборда
+
+    } catch(e) {
+        console.error("Injection error:", e);
+        window.showToast('Failed to inject protocol', 'error');
+    } finally {
+        this.textContent = 'Execute Template';
+        this.disabled = false;
+    }
+});
+
+// =========================================
+// ДИНАМИЧЕСКИЙ ВЫБОР ПРОГРАММЫ (IN-YOUR-FACE UI)
+// =========================================
+
+// Отрисовка сетки карточек
+window.renderProgramGrid = function(activeId) {
+    const grid = document.getElementById('programs-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    Object.entries(window.WORKOUT_PROGRAMS).forEach(([id, prog]) => {
+        const card = document.createElement('div');
+        card.className = `program-card ${id === activeId ? 'active-choice' : ''}`;
+        card.onclick = () => window.setProgram(id);
+        
+        let badge = id === 'custom' 
+            ? '<span style="color:var(--text-muted); font-size:0.7rem; border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 4px;">Manual</span>' 
+            : '<span style="color:var(--ios-purple); font-size:0.7rem; background:rgba(175, 82, 222, 0.2); padding: 2px 6px; border-radius: 4px;">Template</span>';
+        
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                <h4>${prog.name}</h4>
+                ${badge}
+            </div>
+            <p>${prog.description}</p>
+        `;
+        grid.appendChild(card);
+    });
+};
+
+// Сохранение программы на лету (БЕЗ потери остальных данных профиля)
+window.setProgram = async function(programId) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        window.showToast('Switching Architecture...', 'success');
+        
+        // 1. Сначала получаем текущие данные юзера, чтобы не затереть их нулями
+        const res = await fetch(`/api/user-data?date=${window.currentAppDate}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const userData = await res.json();
+        if (!userData.success) return;
+
+        // 2. Упаковываем все старые данные + новую программу
+        const formData = new FormData();
+        formData.append('activeProgram', programId);
+        formData.append('location', userData.location || '');
+        formData.append('bio', userData.bio || '');
+        formData.append('telegram', userData.telegram || '');
+        formData.append('github', userData.github || '');
+        formData.append('weight', userData.weight || '');
+        formData.append('height', userData.height || '');
+        formData.append('calorieGoal', userData.calorieGoal || 2500);
+
+        // 3. Отправляем апдейт
+        const updateRes = await fetch('/api/profile', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        
+        const updateData = await updateRes.json();
+        if (updateData.success) {
+            window.showToast('Architecture Blueprint Activated!', 'success');
+            await window.loadUserData(); // Дашборд мгновенно перерисуется сам
+        }
+    } catch(e) {
+        window.showToast('Error updating blueprint', 'error');
+    }
+};
+
+// Кнопка "Change Blueprint" для возврата к выбору
+window.showProgramSelector = function() {
+    const programSelector = document.getElementById('program-selector-widget');
+    const templateWidget = document.getElementById('template-widget');
+    
+    if (programSelector) {
+        programSelector.style.display = 'block';
+        const selectEl = document.getElementById('edit-active-program');
+        window.renderProgramGrid(selectEl ? selectEl.value : 'custom');
+    }
+    if (templateWidget) templateWidget.style.display = 'none';
+};
 // Инициализация при загрузке страницы
 window.addEventListener('DOMContentLoaded', async () => {
     initPresets();

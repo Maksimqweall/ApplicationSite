@@ -167,12 +167,59 @@
                     </div>
                     <button id="btn-next-day" class="btn btn-secondary btn-sm" onclick="changeDay(1)">►</button>
                 </div>
-                
+                <div class="card mb-20 dashboard-block reveal-up" style="transition-delay: 0.15s;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="timer-info">
+                            <span style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Recovery</span>
+                            <div id="timer-display" style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: var(--ios-cyan); line-height: 1.1;">01:30</div>
+                        </div>
+                        <div class="timer-controls" style="display: flex; gap: 12px;">
+                            <button id="btn-timer-add" class="btn btn-secondary btn-sm">+30s</button>
+                            <button id="btn-timer-start" class="btn btn-sm" style="background: var(--ios-cyan); color: #000; min-width: 80px;">Start</button>
+                        </div>
+                    </div>
+                </div>
                 <!-- Планировщик тренировок -->
                 <div class="card mb-20 dashboard-block reveal-up" style="transition-delay: 0.2s;">
                     <div class="dashboard-header">
                         <h2>🏋️‍♂️ Architecture Planner</h2>
                     </div>
+
+                    <div class="heatmap-wrapper mb-20">
+                        <div class="heatmap-header">
+                            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Consistency Map (12 Weeks)</span>
+                        </div>
+                        <div id="heatmap-grid" class="heatmap-grid"></div>
+                    </div>
+                    <div id="template-widget" class="heatmap-wrapper mb-20" style="display: none; border-color: var(--ios-purple); margin-top: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <span style="font-size: 0.75rem; color: var(--ios-purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Blueprint Suggestion</span>
+                                <h4 id="template-day-title" style="font-size: 1.1rem; font-weight: 600; margin-top: 2px; color: var(--text-main);">Chest & Back Protocol</h4>
+                                <p id="template-exercises-preview" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; max-width: 450px; line-height: 1.4;"></p>
+                            </div>
+                            <button id="btn-inject-template" class="btn btn-sm" style="background: linear-gradient(135deg, var(--ios-purple), #6366f1); color: white;">Execute Template</button>
+                        </div>
+                    </div>
+                    <div id="program-selector-widget" style="display: none; margin-top: 24px; margin-bottom: 24px;">
+                        <h3 style="font-size: 0.85rem; color: var(--ios-cyan); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Select Training Architecture</h3>
+                        <div id="programs-grid" class="programs-grid"></div>
+                    </div>
+
+                    <div id="template-widget" class="heatmap-wrapper mb-20" style="display: none; border-color: var(--ios-purple); margin-top: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 0.75rem; color: var(--ios-purple); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Blueprint Suggestion</span>
+                                    <button onclick="window.showProgramSelector()" style="background:none; border:none; color:var(--text-muted); font-size:0.75rem; cursor:pointer; text-decoration:underline; padding:0;">Change Blueprint</button>
+                                </div>
+                                <h4 id="template-day-title" style="font-size: 1.1rem; font-weight: 600; margin-top: 4px; color: var(--text-main);">Chest & Back Protocol</h4>
+                                <p id="template-exercises-preview" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; max-width: 450px; line-height: 1.4;"></p>
+                            </div>
+                            <button id="btn-inject-template" class="btn btn-sm" style="background: linear-gradient(135deg, var(--ios-purple), #6366f1); color: white; margin-top: 4px;">Execute Template</button>
+                        </div>
+                    </div>
+
                     <form id="add-workout-form" class="tracker-form">
                         <select id="workout-preset" onchange="fillWorkoutPreset()">
                             <option value="">-- Access Exercise Database --</option>
@@ -210,9 +257,14 @@
                         <button type="submit" class="btn btn-sm btn-green">Process Macro</button>
                     </form>
                     <ul id="meal-list" class="item-list"></ul>
-                </div>
-            </div>
-        </div>
+                </div> <div class="card mt-20 dashboard-block reveal-up" style="transition-delay: 0.4s;">
+                    <div class="dashboard-header">
+                        <h2>📈 7-Day Telemetry</h2>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div> </div> </div>
     </section>
 
     <!-- МОДAЛКА РЕДАКТИРОВАНИЯ -->
@@ -240,7 +292,16 @@
                 </div>
                 
                 <label>Caloric Target</label>
-                <input type="number" id="edit-calorie-goal" placeholder="2500" required>   
+                <input type="number" id="edit-calorie-goal" placeholder="2500" required>
+
+                <label>Training Architecture Blueprint</label>
+                <select id="edit-active-program" style="margin-bottom: 15px;">
+                    <option value="custom">Custom Architect (Manual Entry)</option>
+                    <option value="arnold_ppl">Arnold x PPL Hybrid (6 Days)</option>
+                    <option value="classic_ppl">Classic Push / Pull / Legs (6 Days)</option>
+                    <option value="upper_lower">4-Day Upper / Lower Split</option>
+                    <option value="full_body">High Intensity Full Body (3 Days)</option>
+                </select>   
 
                 <label>Geolocator</label>
                 <input type="text" id="edit-location" placeholder="e.g. Berlin, Germany">

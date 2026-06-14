@@ -161,6 +161,7 @@ app.get('/api/user-data', authMiddleware, async (req, res) => {
             weight: user.weight,
             height: user.height,
             calorieGoal: user.calorieGoal,
+            activeProgram: user.activeProgram,
             meals: user.meals,
             workouts: user.workouts
         });
@@ -180,7 +181,7 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
     });
 }, async (req, res) => {
     // ВАЖНО: Убедись, что мы вытаскиваем bio и calorieGoal из запроса
-    const { bio, location, telegram, github, calorieGoal, weight, height } = req.body;
+    const { bio, location, telegram, github, calorieGoal, weight, height, activeProgram } = req.body;
     
     try {
         const updateData = {
@@ -191,7 +192,8 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
             // Жестко конвертируем калории в число
             calorieGoal: calorieGoal ? parseInt(calorieGoal) : 2500,
             weight: weight ? parseFloat(weight) : null,
-            height: height ? parseFloat(height) : null
+            height: height ? parseFloat(height) : null,
+            activeProgram: activeProgram || "custom"
         };
 
         // Логика загрузки фото в Cloudinary остается прежней
@@ -269,50 +271,75 @@ app.post('/api/meals', authMiddleware, async (req, res) => {
         res.status(500).json({ success: false, message: "Database error" }); 
     }
 });
-
-// Обновление профиля (Cloudinary)
-app.post('/api/profile', authMiddleware, upload.single('photo'), async (req, res) => {
-    console.log("File received:", req.file); 
-    const { bio, location, skills, telegram, github } = req.body;
+// =========================================
+// АНАЛИТИКА ПРОГРЕССА (ЗА 7 ДНЕЙ)
+// =========================================
+app.get('/api/analytics', authMiddleware, async (req, res) => {
     try {
-        const updateData = {
-            bio: bio || "",
-            location: location || "",
-            telegram: telegram || "",
-            github: github || "",
-            calorieGoal: calorieGoal ? parseInt(calorieGoal) : 2500,
-            weight: weight ? parseFloat(weight) : null,
-            height: height ? parseFloat(height) : null
-        };
+        // Вычисляем точку отсчета: сегодня минус 6 дней (итого 7 дней)
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() - 6);
+        const dateString = targetDate.toISOString().split('T')[0];
 
-        if (req.file) {
-            const uploadFromBuffer = (req) => {
-                return new Promise((resolve, reject) => {
-                    const cld_upload_stream = cloudinary.uploader.upload_stream(
-                        { folder: "portfolio_avatars" },
-                        (error, result) => {
-                            if (result) resolve(result);
-                            else reject(error);
-                        }
-                    );
-                    streamifier.createReadStream(req.file.buffer).pipe(cld_upload_stream);
-                });
-            };
-            const result = await uploadFromBuffer(req);
-            updateData.photo = result.secure_url; 
-        }
-
-        await prisma.user.update({
+        const user = await prisma.user.findUnique({
             where: { username: req.user.username },
-            data: updateData
+            include: {
+                meals: {
+                    where: { date: { gte: dateString } },
+                    orderBy: { date: 'asc' }
+                }
+            }
         });
 
-        res.json({ success: true });
-    } catch (error) { 
-        console.error("Profile update error:", error);
-        res.status(500).json({ success: false }); 
-    }  
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        // Агрегируем калории по дням
+        const history = {};
+        user.meals.forEach(meal => {
+            if (!history[meal.date]) history[meal.date] = 0;
+            history[meal.date] += meal.calories;
+        });
+
+        res.json({ success: true, history, calorieGoal: user.calorieGoal || 2500 });
+    } catch (error) {
+        console.error("Analytics Error:", error);
+        res.status(500).json({ success: false, message: "Database error" });
+    }
 });
+
+// =========================================
+// ТЕПЛОВАЯ КАРТА ТРЕНИРОВОК (GITHUB STYLE)
+// =========================================
+app.get('/api/heatmap', authMiddleware, async (req, res) => {
+    try {
+        // Берем последние 84 дня (12 недель)
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() - 83);
+        const dateString = targetDate.toISOString().split('T')[0];
+
+        const user = await prisma.user.findUnique({
+            where: { username: req.user.username },
+            include: {
+                workouts: {
+                    where: { date: { gte: dateString } },
+                    select: { date: true } // Оптимизация: берем только даты
+                }
+            }
+        });
+
+        if (!user) return res.status(404).json({ success: false });
+
+        // Убираем дубликаты (если в один день было 2+ упражнений, дата нужна только одна)
+        const activeDays = [...new Set(user.workouts.map(w => w.date))];
+
+        res.json({ success: true, activeDays });
+    } catch (error) {
+        console.error("Heatmap Error:", error);
+        res.status(500).json({ success: false });
+    }
+});
+
+
 
 // Добавление задач
 // --- ДОБАВЛЕНИЕ ТРЕНИРОВКИ ---

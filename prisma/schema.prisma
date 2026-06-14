@@ -18,11 +18,10 @@ model User {
   telegram    String?
   github      String?
   photo       String?
-  // --- НОВЫЕ ПОЛЯ ---
   calorieGoal Int       @default(2500)
   weight      Float?
   height      Float?
-  // ------------------
+  activeProgram String    @default("custom") 
   workouts    Workout[]
   meals       Meal[]
 }

@@ -1,10 +1,14 @@
-const CACHE_NAME = 'fittrack-cache-v3';
+const CACHE_NAME = 'fittrack-cache-v13';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/style.css',
-  '/script.js',
   '/manifest.json',
+  '/js/presets.js',
+  '/js/api.js',
+  '/js/charts.js',
+  '/js/auth.js',
+  '/js/main.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap'
 ];
 
