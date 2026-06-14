@@ -1,19 +1,16 @@
-const CACHE_NAME = 'fittrack-cache-v13';
+const CACHE_NAME = 'fittrack-cache-v11';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/style.css',
+  '/script.js',
   '/manifest.json',
-  '/js/presets.js',
-  '/js/api.js',
-  '/js/charts.js',
-  '/js/auth.js',
-  '/js/main.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap'
 ];
 
-// Установка: кэшируем основные файлы
+// УСТАНОВКА: Скачиваем новые файлы и убиваем режим ожидания
 self.addEventListener('install', (event) => {
+  self.skipWaiting(); // <--- ВОТ ЭТА КОМАНДА ВЫГОНЯЕТ СТАРЫЙ КЭШ СРАЗУ
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Кэширование ресурсов...');
@@ -22,7 +19,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Активация: удаляем старые версии кэша, если мы обновили приложение
+// АКТИВАЦИЯ: Удаляем старый мусор и мгновенно захватываем вкладки
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -34,20 +31,17 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // <--- МГНОВЕННО ПРИМЕНЯЕМ К ТЕКУЩЕЙ СТРАНИЦЕ
   );
 });
 
-// Перехват запросов (Стратегия: Stale-While-Revalidate для статики)
+// ПЕРЕХВАТ ЗАПРОСОВ (Остается без изменений)
 self.addEventListener('fetch', (event) => {
-  // Игнорируем запросы к API (базе данных) и Google авторизации
   if (event.request.url.includes('/api/') || event.request.url.includes('google')) {
     return;
   }
-
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Возвращаем из кэша, если есть. Иначе идем в интернет.
       return cachedResponse || fetch(event.request);
     })
   );
