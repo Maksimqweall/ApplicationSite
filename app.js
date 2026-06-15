@@ -231,7 +231,8 @@ app.post('/api/profile', authMiddleware, (req, res, next) => {
 // ДОБАВЛЕНИЕ ТРЕНИРОВОК И ПИТАНИЯ
 // =========================================
 app.post('/api/workouts', authMiddleware, async (req, res) => {
-    const { title, notes, date } = req.body;
+    // Добавили weight в деструктуризацию
+    const { title, notes, weight, date } = req.body;
     if (!title) return res.status(400).json({ success: false, message: "Title is required" });
 
     try {
@@ -240,6 +241,7 @@ app.post('/api/workouts', authMiddleware, async (req, res) => {
             data: { 
                 title, 
                 notes: notes || "", 
+                weight: weight ? parseFloat(weight) : null, // Сохраняем вес
                 date: targetDate, 
                 user: { connect: { username: req.user.username } } 
             }
@@ -338,7 +340,41 @@ app.get('/api/heatmap', authMiddleware, async (req, res) => {
         res.status(500).json({ success: false });
     }
 });
+// =========================================
+// ПРОГРЕССИЯ ВЕСОВ (STRENGTH HISTORY API)
+// =========================================
+app.get('/api/strength-history', authMiddleware, async (req, res) => {
+    const { exercise } = req.query;
+    if (!exercise) return res.status(400).json({ success: false });
 
+    try {
+        // Берем данные за последние 90 дней
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() - 90);
+        const dateString = targetDate.toISOString().split('T')[0];
+
+        const user = await prisma.user.findUnique({
+            where: { username: req.user.username },
+            include: {
+                workouts: {
+                    where: { 
+                        title: exercise,
+                        date: { gte: dateString },
+                        weight: { not: null } // Берем только те записи, где юзер указал вес
+                    },
+                    orderBy: { date: 'asc' }
+                }
+            }
+        });
+
+        if (!user) return res.status(404).json({ success: false });
+
+        res.json({ success: true, history: user.workouts });
+    } catch (error) {
+        console.error("Strength History Error:", error);
+        res.status(500).json({ success: false });
+    }
+});
 
 
 // Добавление задач

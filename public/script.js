@@ -566,7 +566,10 @@ async function loadUserData() {
                     li.innerHTML = `
                         <div class="item-info">
                             <span class="item-title">${w.title}</span>
-                            ${w.notes ? `<span class="item-notes">${w.notes}</span>` : ''}
+                            <span class="item-notes">
+                                ${w.notes ? w.notes : ''} 
+                                ${w.weight ? `<span class="split-badge" style="background: rgba(175, 82, 222, 0.15); color: var(--ios-purple); border-color: rgba(175, 82, 222, 0.3); margin-left: 6px;">${w.weight} kg</span>` : ''}
+                            </span>
                         </div>
                         <button class="btn-del" onclick="deleteItem('workouts', ${w.id})">✕</button>
                     `;
@@ -680,6 +683,7 @@ async function loadUserData() {
 
             if (typeof window.loadHeatmap === 'function') {
                 window.loadHeatmap();
+                if (typeof window.renderStrengthChart === 'function') window.renderStrengthChart();
             }
 
             return true;
@@ -723,14 +727,17 @@ if (addWorkoutForm) {
         e.preventDefault();
         const titleEl = document.getElementById('workout-title');
         const notesEl = document.getElementById('workout-notes');
+        const weightEl = document.getElementById('workout-weight'); // Новое поле
+        
         const title = titleEl ? titleEl.value : '';
         const notes = notesEl ? notesEl.value : '';
+        const weight = weightEl ? weightEl.value : ''; // Считываем вес
         const token = localStorage.getItem('token');
         try {
             const response = await fetch('/api/workouts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ title, notes, date: window.currentAppDate })
+                body: JSON.stringify({ title, notes, weight, date: window.currentAppDate }) // Отправляем
             });
             const data = await response.json();
             if (data.success) {
@@ -1516,6 +1523,85 @@ window.showProgramSelector = function() {
         window.renderProgramGrid(selectEl ? selectEl.value : 'custom');
     }
     if (templateWidget) templateWidget.style.display = 'none';
+};
+// =========================================
+// 12. STRENGTH PROGRESSION ENGINE
+// =========================================
+window.strengthChart = null;
+
+window.renderStrengthChart = async function() {
+    const token = localStorage.getItem('token');
+    const selectEl = document.getElementById('strength-exercise-select');
+    const ctx = document.getElementById('strengthChart');
+    
+    if (!token || !selectEl || !ctx) return;
+
+    const exercise = selectEl.value;
+
+    try {
+        const response = await fetch(`/api/strength-history?exercise=${encodeURIComponent(exercise)}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        const labels = [];
+        const dataPoints = [];
+
+        data.history.forEach(w => {
+            const d = new Date(w.date);
+            labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            dataPoints.push(w.weight);
+        });
+
+        if (window.strengthChart) window.strengthChart.destroy();
+
+        Chart.defaults.color = '#94A3B8';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        const canvasContext = ctx.getContext('2d');
+        const gradient = canvasContext.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(175, 82, 222, 0.25)'); // iOS Purple
+        gradient.addColorStop(1, 'rgba(175, 82, 222, 0.0)');
+
+        window.strengthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Max Weight (kg)',
+                    data: dataPoints,
+                    borderColor: '#AF52DE',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: '#030712',
+                    pointBorderColor: '#AF52DE',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#AF52DE',
+                    pointHoverBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.85)', titleColor: '#fff', bodyColor: '#F8FAFC',
+                        borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 14, cornerRadius: 12, displayColors: false
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: false, grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false }, border: { display: false } },
+                    x: { grid: { display: false, drawBorder: false }, border: { display: false }, ticks: { maxTicksLimit: 7 } }
+                }
+            }
+        });
+    } catch (error) { console.error("Strength Chart Error:", error); }
 };
 // Инициализация при загрузке страницы
 window.addEventListener('DOMContentLoaded', async () => {

@@ -30,7 +30,8 @@ model Workout {
   id        Int      @id @default(autoincrement())
   title     String
   notes     String?
-  date      String   @default("") // Формат: YYYY-MM-DD
+  weight    Float?   // НОВОЕ ПОЛЕ: Рабочий вес в кг
+  date      String
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 }
