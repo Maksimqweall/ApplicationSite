@@ -1324,3 +1324,126 @@ input, textarea, select {
         line-height: 1.3 !important;
     }
 }
+
+/* =========================================
+   ULTRA-COMPACT NATIVE MOBILE ENGINE
+   ========================================= */
+@media (max-width: 480px) {
+    /* 1. Минимизируем отступы по краям экрана */
+    .section, main, #profile-page {
+        padding: 8px 6px !important;
+    }
+
+    /* 2. Ультра-плотные стеклянные карточки */
+    .card, .dashboard-block, .heatmap-wrapper {
+        padding: 12px !important; /* Сужаем внутреннее пространство */
+        border-radius: 12px !important;
+        margin-bottom: 8px !important; /* Сближаем карточки друг к другу */
+    }
+
+    /* Схлопываем внешние отступы */
+    .mb-20 { margin-bottom: 8px !important; }
+    .mt-20 { margin-top: 8px !important; }
+
+    /* 3. Агрессивное снижение масштабов типографики */
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.05rem !important; letter-spacing: 0.5px !important; }
+    h3 { font-size: 0.85rem !important; }
+    h4 { font-size: 0.8rem !important; }
+    
+    body, p, span, label, a {
+        font-size: 0.8rem !important; /* Уменьшаем базовый текст до ~13px */
+    }
+
+    /* Компактный таймер отдыха */
+    #timer-display {
+        font-size: 1.7rem !important;
+    }
+
+    /* 4. Уплотняем списки элементов (упражнения, макросы) */
+    .item-list li {
+        padding: 6px 10px !important;
+        margin-bottom: 4px !important;
+    }
+    .item-title {
+        font-size: 0.8rem !important;
+    }
+    .item-notes {
+        font-size: 0.75rem !important;
+    }
+    .item-badge, .split-badge {
+        font-size: 0.68rem !important;
+        padding: 1px 5px !important;
+    }
+
+    /* 5. СЕНЬОРСКИЙ ХАК ДЛЯ ИНПУТОВ (Защита от авто-зума iOS)
+       Если сделать шрифт в инпуте меньше 16px, iPhone при фокусе принудительно 
+       приблизит экран, ломая наш запрет на масштабирование.
+       Решение: Оставляем текст 16px, но физически сжимаем инпут за счет 
+       минимальных отступов и фиксированной высоты. Визуально он станет маленьким,
+       но Safari не будет зумить страницу! */
+    input, select, textarea {
+        font-size: 16px !important; 
+        padding: 4px 8px !important; 
+        height: 34px !important; /* Делаем инпуты тонкими и аккуратными */
+        margin-bottom: 6px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Подгоняем кнопки под компактный размер инпутов */
+    .btn, .btn-sm, .btn-green {
+        padding: 4px 10px !important;
+        height: 34px !important;
+        font-size: 0.8rem !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px !important;
+    }
+
+    .dual-input {
+        gap: 6px !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* 6. Сжимаем графики и хитмап, чтобы они не занимали весь экран */
+    .chart-wrapper {
+        height: 160px !important; /* Уменьшаем высоту канваса */
+    }
+
+    .heatmap-grid {
+        gap: 2px !important;
+    }
+    .heatmap-cell {
+        width: 8px !important;
+        height: 8px !important;
+    }
+
+    /* 7. Компактная боковая панель (Профиль) */
+    .profile-sidebar {
+        padding: 12px !important;
+    }
+    .profile-avatar-container, .avatar-circle {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    #avatar-letter {
+        font-size: 1.3rem !important;
+    }
+    #profile-username {
+        font-size: 1.1rem !important;
+        margin-top: 6px !important;
+    }
+    .profile-divider {
+        margin: 10px 0 !important;
+    }
+    
+    /* Сетка выбора программ (Arnold, PPL) */
+    .programs-grid {
+        grid-template-columns: 1fr !important; /* Строго в один ряд на телефонах */
+        gap: 8px !important;
+    }
+    .program-card {
+        padding: 10px !important;
+    }
+}
