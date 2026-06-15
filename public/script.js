@@ -558,11 +558,14 @@ async function loadUserData() {
             setVal('edit-bio', data.bio || '');
 
             // --- 6. ТРЕНИРОВКИ ---
+            // --- 6. ТРЕНИРОВКИ ---
             const workoutList = document.getElementById('workout-list');
             if(workoutList){
                 workoutList.innerHTML = '';
                 (data.workouts || []).forEach(w => {
                     const li = document.createElement('li');
+                    const safeWeight = w.weight ? w.weight : ''; // Защита от null
+                    
                     li.innerHTML = `
                         <div class="item-info">
                             <span class="item-title">${w.title}</span>
@@ -571,12 +574,14 @@ async function loadUserData() {
                                 ${w.weight ? `<span class="split-badge" style="background: rgba(175, 82, 222, 0.15); color: var(--ios-purple); border-color: rgba(175, 82, 222, 0.3); margin-left: 6px;">${w.weight} kg</span>` : ''}
                             </span>
                         </div>
-                        <button class="btn-del" onclick="deleteItem('workouts', ${w.id})">✕</button>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <button class="btn-edit" onclick="window.startEditWorkout(${w.id}, '${w.title.replace(/'/g, "\\'")}', '${(w.notes || '').replace(/'/g, "\\'")}', '${safeWeight}')" style="background: none; border: none; color: var(--ios-cyan); cursor: pointer; font-size: 1rem; padding: 4px;">✎</button>
+                            <button class="btn-del" onclick="deleteItem('workouts', ${w.id})">✕</button>
+                        </div>
                     `;
                     workoutList.appendChild(li);
                 });
             }
-
             // --- 7. ПИТАНИЕ И РАСЧЕТ КАЛОРИЙ ---
             const mealList = document.getElementById('meal-list');
             let totalCals = 0;
@@ -599,6 +604,54 @@ async function loadUserData() {
             } else {
                  (data.meals || []).forEach(m => totalCals += m.calories);
             }
+            // =========================================
+// ОБРАБОТКА ФОРМЫ ПИТАНИЯ (Восстановленный код)
+// =========================================
+const addMealForm = document.getElementById('add-meal-form');
+if (addMealForm) {
+    addMealForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // <--- ИМЕННО ЭТО БЛОКИРУЕТ ОБНОВЛЕНИЕ СТРАНИЦЫ
+        
+        const itemNameEl = document.getElementById('meal-name');
+        const itemName = itemNameEl ? itemNameEl.value : '';
+        const calories = window.calculateKcal(); 
+        const token = localStorage.getItem('token');
+        
+        // UX: Меняем текст кнопки во время загрузки
+        const submitBtn = addMealForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn ? submitBtn.textContent : 'Process Macro';
+        if (submitBtn) submitBtn.textContent = 'Processing...';
+
+        try {
+            const response = await fetch('/api/meals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ itemName, calories, date: window.currentAppDate })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                // Очищаем инпуты после успешного добавления
+                if(itemNameEl) itemNameEl.value = '';
+                const weightEl = document.getElementById('meal-weight');
+                const presetEl = document.getElementById('meal-preset');
+                const calcKcalEl = document.getElementById('calculated-kcal');
+                
+                if(weightEl) weightEl.value = '';
+                if(presetEl) presetEl.value = '';
+                if(calcKcalEl) calcKcalEl.textContent = '0 kcal';
+                
+                window.showToast('Macro processed!', 'success');
+                await window.loadUserData(); // Перерисовываем интерфейс дашборда
+            }
+        } catch (error) { 
+            window.showToast('Server Link Failed', 'error'); 
+        } finally {
+            // Возвращаем кнопке исходный текст
+            if (submitBtn) submitBtn.textContent = originalText;
+        }
+    });
+}
 
             // --- 8. ПРОГРЕСС-БАР КАЛОРИЙ (ИСПРАВЛЕННОЕ ЖЕСТКОЕ ПРИСВОЕНИЕ) ---
             // Жестко приводим цель к числу, чтобы избежать багов строки
@@ -720,61 +773,75 @@ window.deleteItem = async function(type, id) {
     } catch (error) { showToast('Server Link Failed', 'error'); }
 };
 
-// Обработка формы тренировок
+
+
+// Переменная для хранения ID редактируемой тренировки
+let editingWorkoutId = null;
+
+// Функция активации режима редактирования
+window.startEditWorkout = function(id, title, notes, weight) {
+    editingWorkoutId = id;
+    const titleEl = document.getElementById('workout-title');
+    const notesEl = document.getElementById('workout-notes');
+    const weightEl = document.getElementById('workout-weight'); // <--- Поле веса
+    const submitBtn = document.querySelector('#add-workout-form button[type="submit"]');
+    
+    if (titleEl) titleEl.value = title;
+    if (notesEl) notesEl.value = notes;
+    if (weightEl) weightEl.value = weight; // <--- Вставляем вес в форму
+    
+    if (submitBtn) {
+        submitBtn.textContent = 'Update Workout';
+        submitBtn.style.background = 'var(--ios-purple)';
+        submitBtn.style.color = '#fff';
+    }
+    
+    document.getElementById('add-workout-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+// Модифицированная отправка формы
 const addWorkoutForm = document.getElementById('add-workout-form');
 if (addWorkoutForm) {
     addWorkoutForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const titleEl = document.getElementById('workout-title');
         const notesEl = document.getElementById('workout-notes');
-        const weightEl = document.getElementById('workout-weight'); // Новое поле
+        const weightEl = document.getElementById('workout-weight'); // <--- Поле веса
         
         const title = titleEl ? titleEl.value : '';
         const notes = notesEl ? notesEl.value : '';
-        const weight = weightEl ? weightEl.value : ''; // Считываем вес
+        const weight = weightEl ? weightEl.value : ''; // <--- Читаем вес
         const token = localStorage.getItem('token');
+        
+        const url = editingWorkoutId ? `/api/workouts/${editingWorkoutId}` : '/api/workouts';
+        const method = editingWorkoutId ? 'PUT' : 'POST';
+        
         try {
-            const response = await fetch('/api/workouts', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: method,
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ title, notes, weight, date: window.currentAppDate }) // Отправляем
+                body: JSON.stringify({ title, notes, weight, date: window.currentAppDate }) // <--- Отправляем вес
             });
             const data = await response.json();
             if (data.success) {
                 if(titleEl) titleEl.value = '';
                 if(notesEl) notesEl.value = '';
-                await loadUserData();
-            }
-        } catch (error) { showToast('Server Link Failed', 'error'); }
-    });
-}
-
-// Обработка формы питания
-const addMealForm = document.getElementById('add-meal-form');
-if (addMealForm) {
-    addMealForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const itemNameEl = document.getElementById('meal-name');
-        const itemName = itemNameEl ? itemNameEl.value : '';
-        const calories = window.calculateKcal(); 
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('/api/meals', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ itemName, calories, date: window.currentAppDate })
-            });
-            const data = await response.json();
-            if (data.success) {
-                if(itemNameEl) itemNameEl.value = '';
-                const weightEl = document.getElementById('meal-weight');
-                const presetEl = document.getElementById('meal-preset');
-                const calcKcalEl = document.getElementById('calculated-kcal');
+                if(weightEl) weightEl.value = ''; // <--- Очищаем вес
                 
-                if(weightEl) weightEl.value = '';
-                if(presetEl) presetEl.value = '';
-                if(calcKcalEl) calcKcalEl.textContent = '0 kcal';
+                if (editingWorkoutId) {
+                    editingWorkoutId = null;
+                    const submitBtn = document.querySelector('#add-workout-form button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Add Workout';
+                        submitBtn.style.background = '';
+                        submitBtn.style.color = '';
+                    }
+                    showToast('Protocol Updated', 'success');
+                }
+                
                 await loadUserData();
+                // Обновляем график силовых, если он активен
+                if (typeof window.renderStrengthChart === 'function') window.renderStrengthChart();
             }
         } catch (error) { showToast('Server Link Failed', 'error'); }
     });

@@ -1261,3 +1261,66 @@ input:focus, textarea:focus, .tracker-form select:focus {
     border-color: var(--ios-purple);
     background: rgba(175, 82, 222, 0.05);
 }
+
+/* =========================================
+   MOBILE NATIVE FEEL & COMPACTNESS
+   ========================================= */
+
+/* 1. Убиваем синее мерцание при тапе (Android/iOS) */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. Блокируем выделение текста и пружинящий скролл */
+body {
+    overscroll-behavior-y: none; /* Убирает pull-to-refresh */
+    -webkit-user-select: none;   /* Запрещает выделять текст пальцем */
+    user-select: none;
+}
+
+/* 3. Разрешаем выделять текст ТОЛЬКО в полях ввода */
+input, textarea, select {
+    -webkit-user-select: auto;
+    user-select: auto;
+    /* КРИТИЧНО ДЛЯ iOS: если шрифт меньше 16px, iPhone принудительно зумит экран при клике на инпут */
+    font-size: 16px !important; 
+}
+/* 4. Адаптивная компактность для смартфонов */
+@media (max-width: 600px) {
+    /* Уменьшаем огромные отступы внутри карточек */
+    .card, .dashboard-block {
+        padding: 16px; 
+        border-radius: 16px;
+    }
+    
+    /* Сокращаем расстояния между карточками */
+    .mb-20 {
+        margin-bottom: 12px;
+    }
+
+    /* Делаем заголовки чуть аккуратнее */
+    .dashboard-header h2 {
+        font-size: 1.1rem;
+    }
+
+    /* Уплотняем списки тренировок и питания */
+    .item-list li {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+    
+    /* Делаем тепловую карту (Heatmap) более кучной */
+    .heatmap-grid {
+        gap: 3px;
+    }
+    .heatmap-cell {
+        width: 12px;
+        height: 12px;
+    }
+    
+    /* Уменьшаем шрифты в превью упражнений */
+    #template-exercises-preview {
+        font-size: 0.75rem !important;
+        line-height: 1.3 !important;
+    }
+}

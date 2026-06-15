@@ -253,6 +253,29 @@ app.post('/api/workouts', authMiddleware, async (req, res) => {
     }
 });
 
+// --- ОБНОВЛЕНИЕ ТРЕНИРОВКИ ---
+app.put('/api/workouts/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { title, notes, weight } = req.body; // <--- Добавили weight
+
+    try {
+        await prisma.workout.updateMany({
+            where: { 
+                id: parseInt(id), 
+                user: { username: req.user.username } 
+            },
+            data: { 
+                title, 
+                notes: notes || "",
+                weight: weight ? parseFloat(weight) : null // <--- Обновляем вес в базе
+            }
+        });
+        res.json({ success: true });
+    } catch (error) { 
+        console.error("Workout Update Error:", error);
+        res.status(500).json({ success: false, message: "Database error" }); 
+    }
+});
 app.post('/api/meals', authMiddleware, async (req, res) => {
     const { itemName, calories, date } = req.body;
     if (!itemName) return res.status(400).json({ success: false, message: "Item name is required" });
