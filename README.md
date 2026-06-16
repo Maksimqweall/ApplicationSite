@@ -118,10 +118,13 @@ GOOGLE_CLIENT_ID="your_google_cloud_oauth2_client_id"
 
 
 7. Push Database Blueprints & Sync Client
+   
 Map the Prisma relational architecture models directly into your live database node:
+
 npx prisma db push
 
 5. Start the Live Server Engine
+   
 npm start
 
 The application backend will initialize, mapping standard endpoints on http://localhost:3000
