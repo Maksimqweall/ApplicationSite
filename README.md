@@ -131,8 +131,13 @@ The application backend will initialize, mapping standard endpoints on http://lo
 
 Core Competencies Demonstrated in This Project
 By building this application entirely from scratch, I have mastered and proven structural industry-standard engineering skills:
+
 Advanced Systems Integration: Programmatically tying databases, file delivery CDNs, federated authentication brokers, and real-time messaging webhooks into a unified backend.
+
 Performance-Driven UI Engineering: Constructing highly reactive interfaces utilizing native browser APIs, achieving massive performance spikes compared to typical heavy web application frameworks.
+
 Secure Enterprise Coding: Enforcing strict data isolation rules through stateful JSON Web Token parsing mechanisms, password encryption protocols, and OAuth2 identity validations.
+
 Mobile-First Product Delivery: Tuning network caches, viewport containment protocols, and hardware processing layers to ship an ultra-compact application maximizing space efficiency.
+
 Developed with clean code architecture and absolute engineering discipline. Looking for an ambitious Full-Stack Engineer who understands low-level web performance, secure systems design, and database integrity? Let's connect and build something extraordinary.
