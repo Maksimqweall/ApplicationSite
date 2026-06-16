@@ -84,10 +84,9 @@ Storage & Webhook Integrations: Handles file stream piping by receiving multipar
 
 Installation & Local Environment Spin-up
 To clone, configure, and execute this environment locally on your workstation, follow these steps:
-git clone https://github.com/Maksimqweall/ApplicationSite
-cd FitTrack
 
 1. Clone the Source Repository
+   
 git clone https://github.com/Maksimqweall/ApplicationSite
 
 cd FitTrack
