@@ -82,46 +82,6 @@ Dual-Tier Identity Verification: Features deep encryption protocols deploying cu
 
 Storage & Webhook Integrations: Handles file stream piping by receiving multipart form uploads in memory buffer structures, pushing them asynchronously to the Cloudinary CDN network, and routing client interactions directly into a secure Telegram Bot messaging endpoint.
 
-📈 Database Schema Architecture (Prisma Blueprint)
-The database layers enforce complete relational integrity using the following structural design layout:
-model User {
-  id            Int       @id @default(autoincrement())
-  username      String    @unique
-  password      String?
-  googleId      String?   @unique
-  email         String?   @unique
-  bio           String?
-  location      String?
-  telegram      String?
-  github        String?
-  photo         String?
-  calorieGoal   Int       @default(2500)
-  weight        Float?
-  height        Float?
-  activeProgram String    @default("custom") 
-  workouts      Workout[]
-  meals         Meal[]
-}
-
-model Workout {
-  id        Int      @id @default(autoincrement())
-  title     String
-  notes     String?
-  weight    Float?   
-  date      String   @default("") // Mapping format: YYYY-MM-DD
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Meal {
-  id        Int      @id @default(autoincrement())
-  itemName  String
-  calories  Int
-  date      String   @default("") // Mapping format: YYYY-MM-DD
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-}
-
 Installation & Local Environment Spin-up
 To clone, configure, and execute this environment locally on your workstation, follow these steps:
 git clone https://github.com/Maksimqweall/ApplicationSite
