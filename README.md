@@ -89,24 +89,36 @@ cd FitTrack
 
 1. Clone the Source Repository
 git clone https://github.com/Maksimqweall/ApplicationSite
+
 cd FitTrack
 
 3. Install Project Dependencies
+
 npm install
 
-4. Establish Environment Configurations
+5. Establish Environment Configurations
+
 Create a root-level .env file and populate it with your infrastructure access keys:
 PORT=3000
+
 DATABASE_URL="postgresql://username:password@host:port/database?sslmode=require"
+
 JWT_SECRET="your_ultra_secure_jwt_random_salt_string"
+
 TELEGRAM_BOT_TOKEN="your_telegram_bot_api_token"
+
 TELEGRAM_CHAT_ID="your_personal_telegram_chat_id"
+
 CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
+
 CLOUDINARY_API_KEY="your_cloudinary_api_key"
+
 CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
+
 GOOGLE_CLIENT_ID="your_google_cloud_oauth2_client_id"
 
-6. Push Database Blueprints & Sync Client
+
+7. Push Database Blueprints & Sync Client
 Map the Prisma relational architecture models directly into your live database node:
 npx prisma db push
 
